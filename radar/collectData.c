@@ -579,7 +579,7 @@ int main(int argc, char *argv[])
         strcpy(basename, argv[1]);
     } else {
         printf("Default filenames: EasySense");
-        basename = "EasySense";
+        strcpy(basename,"EasySense");
     }
 
 
