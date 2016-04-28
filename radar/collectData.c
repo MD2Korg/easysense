@@ -575,10 +575,10 @@ int main(int argc, char *argv[])
         TOTAL_FRAMES = atoi(argv[2]); //Read in number of frames to sample
     }
     if (argc >= 2) {
-        printf("Base filenames: %s", argv[1]);
+        printf("Base filenames: %s\n", argv[1]);
         strcpy(basename, argv[1]);
     } else {
-        printf("Default filenames: EasySense");
+        printf("Default filenames: EasySense\n");
         strcpy(basename,"EasySense");
     }
 
@@ -652,12 +652,10 @@ int main(int argc, char *argv[])
 	if(ADCFoundFlag ==0)
 	{
 		printf("ADC is not connected \n");
-		return;
 	}
 	if(radarFoundFlag == 0)
 	{
 		printf("Radar is not connected \n");
-		return;
 	}
 	
 	printf("Found both radar and ADC\nStarting measurements....\n");
