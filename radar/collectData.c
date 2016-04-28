@@ -234,7 +234,6 @@ void *RadarRead()
 	// Processes the file that contains the raw bytes and converts into samples by combining 4 bytes.
 	processFile(fileName,fileNameFinal);
 
-	return 0;
 }
 
 
@@ -562,7 +561,6 @@ void *MotionSenseRead()
 	fclose(fp7);
 	fclose(fp8);
 
-	return 0;
 }
 
 int main(int argc, char *argv[])
@@ -643,7 +641,7 @@ int main(int argc, char *argv[])
 	else 
 	{
 		printf("something's wrong with devices\n");
-		return;
+		return 1;
 	}
 	
 	Close(flash);
