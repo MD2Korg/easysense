@@ -24,7 +24,17 @@
 #define SLAVEADD 0xD0
 #define SLAVEADD1 0x42
 #define COMMANDMODE 0x30 /*Address pointer is Or'ed to use in command mode*/
-int ECGIndex = 0, radarIndex =1; int exitFlag = 0;
+
+/* MD2K Configurations */
+// 1 minute = 6000 frames
+int TOTAL_FRAMES = 3000;
+char basename[80];
+
+
+
+int ECGIndex = 0
+int radarIndex =1;
+int exitFlag = 0;
 
 void *RadarRead()
 {
@@ -51,15 +61,12 @@ void *RadarRead()
 	long int counterFrames=0;
 	double fps;
 	FILE *fp = NULL,*fp1 = NULL,*fp2 = NULL,*fp3 = NULL;
-	char id[80];
-	fp = fopen("LastFileName.txt","r");	
-	fscanf(fp,"%s",id); 
-	fclose(fp);	
-	char fileName[300],fileNameFinal[310],fileNameFinalSwitch[316],fileNameFPS[316],fileNameSampling[316];	
-	sprintf(fileName,"%s_Radar.txt",id);
-	sprintf(fileNameFinal,"%s_Radar_Final.txt",id);
-	sprintf(fileNameFinalSwitch,"%s_Radar_Switch.txt",id);
-	sprintf(fileNameFPS,"%s_Radar_FPS.txt",id);
+	char fileName[300],fileNameFinal[310],fileNameFinalSwitch[316],fileNameFPS[316],fileNameSampling[316];
+
+	sprintf(fileName,"%s_Radar.txt",basename);
+	sprintf(fileNameFinal,"%s_Radar_Final",basename);
+	sprintf(fileNameFinalSwitch,"%s_Radar_Switch.txt",basename);
+	sprintf(fileNameFPS,"%s_Radar_FPS.txt",basename);
 
 	fp1 = fopen(fileNameFinalSwitch,"w");
 	fp = fopen(fileName,"w");
@@ -158,18 +165,15 @@ void *RadarRead()
 				// Ignore the first sweep's data that was done before the timer was started
 				if(counterFrames > 1)
 				{
-				// Reads the previous sweep's data while the current sweep is going on 
-				periodicFunc(flash,dataRead);		
-					
+                    // Reads the previous sweep's data while the current sweep is going on
+                    periodicFunc(flash,dataRead);
 				}
 				// Waits until the current sweep is completed
 				monitorSweepStatus(flash);
 			
 				if(counterFrames >1)
 				{	// Writing the data and selected channel index onto a file
-									
-					fwrite(dataRead,1,2048,fp);		
-							
+					fwrite(dataRead,1,2048,fp);
 				}					
 				
 							
@@ -202,8 +206,8 @@ void *RadarRead()
 			//	printf("%f is the frame rate\n",fps);
 
 
-				// 1 minute = 6000 frames
-				if(counterFrames >= 3000)
+
+				if(counterFrames >= TOTAL_FRAMES)
 				{
 					//printf("Exiting measurement!\n");
 					exitFlag = 1;
@@ -232,6 +236,8 @@ void *RadarRead()
 
 	return 0;
 }
+
+
 void *MotionSenseRead()
 {
 	sleep(3);
@@ -242,30 +248,28 @@ void *MotionSenseRead()
 	char flagAcc = 0;
 	long int countSamples = 0;
 	struct mpsse_context *flash = NULL;
-	/* FIle Handling Variables */	
+	/* File Handling Variables */
 	FILE *fp = NULL,*fp1 = NULL,*fp2 = NULL,*fp3 = NULL,*fp4 = NULL,*fp5 = NULL,*fp6 = NULL,*fp7= NULL,*fp8=NULL;
-	char id[80];
-	fp = fopen("LastFileName.txt","r");	
-	fscanf(fp,"%s",id); 
-	fclose(fp);	
 	char fileName[300],fileNameAccX[310],fileNameAccY[316],fileNameAccZ[316],fileNameGyroX[310],fileNameGyroY[316],fileNameGyroZ[316];	
-	char fileNameCh1[310],fileNameCh2[316];	
-	sprintf(fileNameCh1,"%s_Ch1.txt",id);
-	sprintf(fileNameCh2,"%s_Ch2.txt",id);
-	fp7 = fopen(fileNameCh1,"w");
-	fp8 = fopen(fileNameCh2,"w");
-	sprintf(fileNameAccX,"%s_AccX.txt",id);
-	sprintf(fileNameAccY,"%s_AccY.txt",id);
-	sprintf(fileNameAccZ,"%s_AccZ.txt",id);
-	sprintf(fileNameGyroX,"%s_GyroX.txt",id);
-	sprintf(fileNameGyroY,"%s_GyroY.txt",id);
-	sprintf(fileNameGyroZ,"%s_GyroZ.txt",id);	
+	char fileNameCh1[310],fileNameCh2[316];
+
+	sprintf(fileNameCh1,"%s_Ch1.txt",basename);
+	sprintf(fileNameCh2,"%s_Ch2.txt",basename);
+	sprintf(fileNameAccX,"%s_AccX.txt",basename);
+	sprintf(fileNameAccY,"%s_AccY.txt",basename);
+	sprintf(fileNameAccZ,"%s_AccZ.txt",basename);
+	sprintf(fileNameGyroX,"%s_GyroX.txt",basename);
+	sprintf(fileNameGyroY,"%s_GyroY.txt",basename);
+	sprintf(fileNameGyroZ,"%s_GyroZ.txt",basename);	
+
 	fp1 = fopen(fileNameAccX,"w");
 	fp2 = fopen(fileNameAccY,"w");
 	fp3 = fopen(fileNameAccZ,"w");	
 	fp4 = fopen(fileNameGyroX,"w");
 	fp5 = fopen(fileNameGyroY,"w");
 	fp6 = fopen(fileNameGyroZ,"w");	
+    fp7 = fopen(fileNameCh1,"w");
+	fp8 = fopen(fileNameCh2,"w");
 
 	/*Timer related variables*/
 	timerEventTrigger *et1 = (timerEventTrigger*)malloc(sizeof(timerEventTrigger));
@@ -547,8 +551,6 @@ void *MotionSenseRead()
 	else
 		printf("Something's wrong!\n");
 
-	//printf("%d is the number of screw ups\n",countExceed);
-	//gettimeofday(&t3,NULL);
 	//printf("Total Measurement time is %f seconds\n",((t3.tv_sec - t4.tv_sec)*1000+ (t3.tv_usec - t4.tv_usec)/1000.0)/1000.0);
 	Close(flash);
 	fclose(fp1);
@@ -559,16 +561,28 @@ void *MotionSenseRead()
 	fclose(fp6);
 	fclose(fp7);
 	fclose(fp8);
+
 	return 0;
-
-
-
 }
-int main(void)
+
+int main(int argc, char *argv[])
 {
 	// Sets the priority of the current process to the highest level.
 	setpriority(PRIO_PROCESS, 0, -20);	
 	
+
+    if (argc >= 3) {
+        TOTAL_FRAMES = atoi(argv[2]); //Read in number of frames to sample
+    }
+    if (argc >= 2) {
+        printf("Base filenames: %s", argv[1]);
+        strcpy(basename, argv[1]);
+    } else {
+        printf("Default filenames: EasySense");
+        basename = "EasySense";
+    }
+
+
 
 	//MPSSE related variables
 	int radarFoundFlag = 0,ADCFoundFlag = 0;
@@ -579,6 +593,7 @@ int main(void)
 	unsigned char readbits;
 	unsigned char readbits1[24];
 	char command[10] ={0};
+
 	if((flash = MPSSEMod(SPI0,FOUR_HUNDRED_KHZ, MSB,latencyTimer,0)) != NULL && flash->open)
 	{
 		//Reading Chip ID
@@ -600,7 +615,9 @@ int main(void)
 			ECGIndex = 0;
 		}	
 	}
-	else printf("something's wrong with devices\n");
+	else {
+	    printf("something's wrong with devices\n");
+	}
 
 	if((flash1 = MPSSEMod(SPI0,FOUR_HUNDRED_KHZ, MSB,latencyTimer,1)) != NULL && flash->open)
 	{
@@ -635,10 +652,12 @@ int main(void)
 	if(ADCFoundFlag ==0)
 	{
 		printf("ADC is not connected \n");
+		return;
 	}
 	if(radarFoundFlag == 0)
 	{
 		printf("Radar is not connected \n");
+		return;
 	}
 	
 	printf("Found both radar and ADC\nStarting measurements....\n");
@@ -651,7 +670,7 @@ int main(void)
 //    	pthread_join(tid, NULL); 
     	pthread_join(tid1, NULL);	
 
-
+    return 0;
 }
 
 
