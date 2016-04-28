@@ -32,7 +32,7 @@ char basename[80];
 
 
 
-int ECGIndex = 0
+int ECGIndex = 0;
 int radarIndex =1;
 int exitFlag = 0;
 
