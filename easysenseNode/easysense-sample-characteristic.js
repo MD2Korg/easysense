@@ -29,11 +29,12 @@ EasySenseSampleCharacteristic.prototype.onWriteRequest = function(data, offset, 
     if(offset) {
         callback(this.RESULT_ATTR_NOT_LONG);
     }
-    else if (data.length !== 2) {
-        callback(this.RESULT_INVALID_ATTRIBUTE_LENGTH);
-    }
+//    else if (data.length !== 2) {
+//        callback(this.RESULT_INVALID_ATTRIBUTE_LENGTH);
+//    }
     else {
         var command = data.readUInt8(0);  //8-bit int: Accepted range 1-60 seconds
+        //TODO: Accept LONG for timestamp and pass it to the executable
         var self = this;
 
         this.easysense.once('ready', function(result) {
