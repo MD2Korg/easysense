@@ -3,12 +3,14 @@
 
 var util = require('util');
 var bleno = require('bleno');
-//var easysense = require('./easysense');
+var easysense = require('./easysense');
+var easySenseIdentifiers = require('./easysense').EasySenseIdentifiers;
+
 
 function EasySenseSampleCharacteristic(easysense) {
     
     bleno.Characteristic.call(this, {
-        uuid: 'ffc1',
+        uuid: easySenseIdentifiers.SENSOR,
         properties: ['write', 'notify'],
         descriptors: [
             new bleno.Descriptor({
