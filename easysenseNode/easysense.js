@@ -26,10 +26,9 @@ function EasySense() {
 
 util.inherits(EasySense, events.EventEmitter);
 
-EasySense.prototype.sample = function(seconds) {
+EasySense.prototype.sample = function(seconds, filebase) {
     console.log("EasySense: Begin Sampling");
     var self = this;
-    var filebase = Date.now();
     var count = 0;
     if (seconds > 60) {
         console.log("Seconds too large: " + seconds);

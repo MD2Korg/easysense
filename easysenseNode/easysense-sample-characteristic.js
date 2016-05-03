@@ -6,7 +6,6 @@ var bleno = require('bleno');
 var easysense = require('./easysense');
 var easySenseIdentifiers = require('./easysense').EasySenseIdentifiers;
 
-
 function EasySenseSampleCharacteristic(easysense) {
     
     bleno.Characteristic.call(this, {
@@ -15,7 +14,7 @@ function EasySenseSampleCharacteristic(easysense) {
         descriptors: [
             new bleno.Descriptor({
                 uuid: '2901', //User Description (https://developer.bluetooth.org/gatt/descriptors/Pages/DescriptorsHomePage.aspx)
-                value: 'Runs EasySenses data collection process and notifies when done'
+                value: 'EasySenses data collection'
             })
         ]
     });
@@ -31,12 +30,13 @@ EasySenseSampleCharacteristic.prototype.onWriteRequest = function(data, offset, 
     if(offset) {
         callback(this.RESULT_ATTR_NOT_LONG);
     }
-//    else if (data.length !== 2) {
-//        callback(this.RESULT_INVALID_ATTRIBUTE_LENGTH);
-//    }
+    else if (data.length !== 5) {
+        callback(this.RESULT_INVALID_ATTRIBUTE_LENGTH);
+    } 
     else {
-        var command = data.readUInt8(0);  //8-bit int: Accepted range 1-60 seconds
-        //TODO: Accept LONG for timestamp and pass it to the executable
+        //Example input: 0x3C5728C562 // 60 run on Tue, 03 May 2016 15:36:02 GMT d
+        var seconds = data.readUInt8(0);  //8-bit int: Accepted range 1-60 seconds
+        var filebase = data.readUInt32BE(1).toString(10) + '000'; //32-bit uint: Timestamp epoch
         var self = this;
 
         this.easysense.once('ready', function(result) {
@@ -58,7 +58,7 @@ EasySenseSampleCharacteristic.prototype.onWriteRequest = function(data, offset, 
         });
         
         
-        this.easysense.sample(command);
+        this.easysense.sample(seconds, filebase);
         callback(this.RESULT_SUCCESS);
     }
 };
