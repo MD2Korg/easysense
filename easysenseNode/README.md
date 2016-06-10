@@ -1,5 +1,15 @@
 # EasySense Procotol and System Configuration
 
+
+# Protocol
+
+Devices are uniquely identified by their device UUID. e.g. `FFC84E54-013D-40D9-B7C4-DFB356C0F6A9`.
+
+| Service Name | Number | Description | Characteristic | Number | Properties |
+|--------------|--------|-------------|----------------|--------|------------|
+| Battery      | 0x180F | The Battery Service exposes the Battery State and Battery Level of a single battery or set of batteries in a device. | Battery Level | 0x2A19 | Read |
+| EasySense | ef1a10d8-272d-4822-b436-39f87205bbac | Controller service for the EasySense board | Controller | 850a75ab-a811-405d-9817-2867ac36aafc | Write, Notify |
+
 ### BLE Protocol
 EasySense will advertise itself as a peripheral `easysense` with single service `ef1a10d8-272d-4822-b436-39f87205bbac`.  This service contains a single characteristic `850a75ab-a811-405d-9817-2867ac36aafc` for controlling the sensor.  
 
@@ -21,7 +31,7 @@ Data will be written to the subscribed characteristic each second to indicate th
 ### System Configuration
 
 ```
-$ cat /etc/systemd/system/rfkill-unblock.service 
+$ cat /etc/systemd/system/rfkill-unblock.service
 [Unit]
 Description=RFKill-Unblock All Devices
 
