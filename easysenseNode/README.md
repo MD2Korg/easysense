@@ -30,6 +30,11 @@ Data will be written to the subscribed characteristic each second to indicate th
 
 ### System Configuration
 
+Disable Bluetooth service
+```
+systemctl disable bluetooth
+```
+
 ```
 $ cat /etc/systemd/system/rfkill-unblock.service
 [Unit]
@@ -55,3 +60,13 @@ $ cat /etc/ld.so.conf
 ```
 
 Run `ldconfig`
+
+
+### Compile EasySense code
+```
+git clone git@github.com:MD2Korg/easysense.git
+
+cd easysense/radar
+
+make
+```
