@@ -1,0 +1,7 @@
+#! /bin/bash 
+
+clear
+pwd
+
+make clean
+sudo make uninstall

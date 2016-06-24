@@ -1,4 +1,4 @@
-# EasySense Procotol and System Configuration
+# EasySense Protocol and System Configuration
 
 
 # Protocol
