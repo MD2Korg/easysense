@@ -60,13 +60,3 @@ $ cat /etc/ld.so.conf
 ```
 
 Run `ldconfig`
-
-
-### Compile EasySense code
-```
-git clone git@github.com:MD2Korg/easysense.git
-
-cd easysense/radar
-
-make
-```

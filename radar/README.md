@@ -4,59 +4,79 @@
 Components Required
 1. Intel Edison - 1
 2. USB OTG adapter and cable - 1
-3.  USB cable - 2 
+3.  USB cable - 2
 
-Accessing USB Mass storage from within Intel Edison
-source: https://communities.intel.com/thread/55510?start=0&tstart=0
-make the directory as mount point
-mkdir /massStorage
-Initialization
-losetup -o 8192 /dev/loop0 /dev/disk/by-partlabel/update
-mounting the partition
-mount /dev/loop0 /massStorage
-Unmounting the mass storage device
-1. umount /massStorage
-2. modprobe g_multi
-Setting up the repository
-source: http://alextgalileo.altervista.org/edison-package-repo-configuration-instructions.html
-command: opkg install "Link"
-Steps to be followed
-Open the file in editor
-1. vi /etc/opkg/base-feeds.conf
-2. Copy the following lines:
-src/gz all http://repo.opkg.net/edison/repo/all
-src/gz edison http://repo.opkg.net/edison/repo/edison
-src/gz core2-32 http://repo.opkg.net/edison/repo/core2-32
-3. Save and exit
-4. Run command opkg update.
-Installing libusb
-source: https://communities.intel.com/thread/55789?start=0&tstart=0
-command: opkg install libusb-1.0-dev
-Installing ftdi kernel
-source: https://communities.intel.com/thread/62198?tstart=0
-1. opkg install http://repo.opkg.net/edison/repo/edison/kernel-module-ftdi-sio_3.10.17-r0_edison.ipk
-2. Will mostly show errors. Delete the file in /boot and repeat the above step
-Installing Swig Dev
-1. command: opkg install http://repo.opkg.net/edison/repo/core2-32/swig-dev_3.0.5-r0_core2-32.ipk
-Installing core Utils required in make files sometimes
-1. command: opkg install http://repo.opkg.net/edison/repo/core2-32/coreutils-dev_8.22-r0_core2-32.ipk
-Install Python dev
-1. command: opkg install http://repo.opkg.net/edison/repo/core2-32/libpython2.7-1.0_2.7.3-r0.3_core2-32.ipk
-Install LibFtdi
-1. cd /home/Libraries/libftdi1-1.1
-2. mkdir build
-3. cd build
-4. cmake -DCMAKE_INSTALL_PREFIX="/usr" ../
-5. make
-6. make install\
-Install libmpsse
-1. cd /home/Libraries/libmpsse-1.3/src/
-2. ./configure --disable-python
-3. make
-4. make install
-Compiling our source codes
-code is located in /home/code
-1. cd /home/code
-2. gcc -pthread -I /usr/include/libftdi1/ -I /usr/local/include/ -L /usr/lib/ -L /usr/local/lib/ collectData.c -lmpsse -lusb-1.0 -lftdi1 -o collectData.o
-3. gcc -pthread -I /usr/include/libftdi1/ -I /usr/local/include/ -L /usr/lib/ -L /usr/local/lib/ ChipIdMod.c -lmpsse -lusb-1.0 -lftdi1 -o chipIdMod.o
-4.  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/:/usr/local/lib/
+## Accessing USB Mass storage from within Intel Edison
+```
+unmount /media/storage
+
+losetup -o 8192 /dev/loop0 /dev/disk/by-partlabel/updates
+
+mount /dev/loop0 /media/storage
+```
+
+Available at `/media/storage`
+
+
+
+## Install dependencies
+```
+opkg install libusb-1.0-dev kernel-module-ftdi-sio swig-dev coreutils-dev libpython2.7-1.0
+
+```
+
+### Install libftdi
+```
+wget http://www.intra2net.com/en/developer/libftdi/download/libftdi1-1.3.tar.bz2
+tar -xjf libftdi1-1.3.tar.bz2
+cd libftdi1-1.3
+
+mkdir build
+cd build
+
+cmake -DCMAKE_INSTALL_PREFIX="/usr" ../
+make
+make install
+
+```
+
+
+### Clone EasySense repository
+```
+cd /home/root/
+git clone git@github.com:MD2Korg/easysense.git
+```
+
+### Install libmpsse
+```
+cd /home/root/easysense/radar/libmpsse-1.3/src/
+
+./configure --disable-python
+make
+make install
+```
+
+### EasySense Collector
+```
+cd /home/root/easysense/radar/
+make
+```
+
+## Verify functionality
+```
+root@EasySense:# cd /home/root/easysense/radar/
+
+root@EasySense:~/easysense/radar# ./easysense.sh 12345 10
+Base filenames: 12345
+Chip ID read is 3	6
+Chip ID read is 3	6
+ADC is not connected
+Found both radar and ADC
+Starting measurements....
+Chip ID read is 3	6
+root@EasySense:~/easysense/radar# ls -ahl 12345*
+-rw-r--r--  1 root root 8.0K Jun 24 15:35 12345_Radar.txt
+-rw-r--r--  1 root root   19 Jun 24 15:35 12345_Radar_FPS.txt
+-rw-r--r--  1 root root  20K Jun 24 15:35 12345_Radar_Final
+-rw-r--r--  1 root root   10 Jun 24 15:35 12345_Radar_Switch.txt
+```

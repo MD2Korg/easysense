@@ -5,7 +5,7 @@ var util = require('util');
 var events = require('events');
 var spawn = require('child_process').spawn;
 
-CODES = {
+var CODES = {
     SUCCESS: 250,
     VERIFIED: 249,
     FAILURE: 248,
@@ -14,10 +14,10 @@ CODES = {
     //PROGRESS: 0-N: N < 150
 };
 
-IDENTIFIERS = {
+var IDENTIFIERS = {
     EASYSENSE: 'ef1a10d8-0000-1000-8000-00805F9B34FB',
     SENSOR: '850a75ab-0000-1000-8000-00805F9B34FB'
-}
+};
 
 
 function EasySense() {
@@ -33,26 +33,35 @@ EasySense.prototype.sample = function(seconds, filebase) {
     if (seconds > 60) {
         console.log("Seconds too large: " + seconds);
         self.emit('ready', CODES.INPUT_TO_LARGE);
-    } else if (seconds == 0) {
+    } else if (seconds === 0) {
         console.log("Seconds too small: " + seconds);
         self.emit('ready', CODES.INPUT_TO_SMALL);
     } else {
-    
+
         console.log('Starting EasySense data collection');
         console.log('/home/root/easysense/radar/easysense.sh' + ' /home/root/' + filebase + ' ' + (seconds*100));
         var radar = spawn('/home/root/easysense/radar/easysense.sh', ['/home/root/' + filebase, seconds*100]);
-        
+
         var interval = setInterval(function() {
             self.emit('progress', count++);
         }, 1000);
+
+        radar.stdout.on('data', function(data) {
+           console.log('stdout: ' + data); 
+        });
+        
+        radar.stderr.on('data', function(
+                        data) {
+           console.log('stderr: ' + data); 
+        });
         
         radar.on('close', function(code) {
             console.log('child process collectData exited with code ' + code);
             clearInterval(interval);
-            self.emit('ready', CODES.SUCCESS);    
+            self.emit('ready', CODES.SUCCESS);
             console.log("EasySense measurement complete");
-        });       
-    };
+        });
+    }
 };
 
 
