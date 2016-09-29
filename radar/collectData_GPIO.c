@@ -25,8 +25,8 @@
 #define SLAVEADD1 0x46
 #define COMMANDMODE 0x30 /*Address pointer is Or'ed to use in command mode*/
 int ECGIndex = 0, radarIndex =1; int exitFlag = 0;
-char directoryLocation[] ="/media/sdcard/"; 
-
+//char directoryLocation[] ="/media/sdcard/"; 
+char directoryLocation[] = "/home/code/data/";
 void *RadarRead()
 {
 	sleep(3);
@@ -232,7 +232,7 @@ void *RadarRead()
 	fclose(fp1);
 	fclose(fp2);
 	// Processes the file that contains the raw bytes and converts into samples by combining 4 bytes.
-	processFile(fileName,fileNameFinal);
+//	processFile(fileName,fileNameFinal);
 
 	return 0;
 }
@@ -661,3 +661,4 @@ int main(void)
 
 
 
+                                                  
