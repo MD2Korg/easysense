@@ -15,8 +15,8 @@ var CODES = {
 };
 
 var IDENTIFIERS = {
-    EASYSENSE: 'ea215e5e', 
-    SENSOR:    'ef1a'
+    EASYSENSE: 'ea210000-0000-1000-8000-00805f9b5d6f', //ea215e5e-0000-1000-8000-00805f9b5d6f
+    SENSOR:    'ea210001-0000-1000-8000-00805f9b5d6f'
 };
 
 
