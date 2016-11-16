@@ -33,6 +33,9 @@ EasySenseSampleCharacteristic.prototype.onWriteRequest = function(data, offset, 
     else if (data.length !== 5) {
         callback(this.RESULT_INVALID_ATTRIBUTE_LENGTH);
     } 
+    else if (this.easysense.running) {
+        callback(this.RESULT_INVALID_ATTRIBUTE_LENGTH);
+    }
     else {
         //Example input: 0x3C5728C562 // 60 run on Tue, 03 May 2016 15:36:02 GMT
         var seconds = data.readUInt8(0);  //8-bit int: Accepted range 1-60 seconds
@@ -56,8 +59,7 @@ EasySenseSampleCharacteristic.prototype.onWriteRequest = function(data, offset, 
                self.updateValueCallback(data,0);
            } 
         });
-        
-        
+
         this.easysense.sample(seconds, filebase);
         callback(this.RESULT_SUCCESS);
     }
