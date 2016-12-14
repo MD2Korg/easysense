@@ -30,12 +30,6 @@ Data will be written to the subscribed characteristic each second to indicate th
 
 ### System Configuration
 
-```
-rfkill unblock bluetooth
-killall bluetoothd
-hciconfig hci0 up 
-```
-
 Disable Bluetooth service
 ```
 systemctl disable bluetooth
