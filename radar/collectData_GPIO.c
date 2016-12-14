@@ -26,7 +26,7 @@
 #define COMMANDMODE 0x30 /*Address pointer is Or'ed to use in command mode*/
 int ECGIndex = 0, radarIndex =1; int exitFlag = 0;
 //char directoryLocation[] ="/media/sdcard/";
-char directoryLocation[] = "/home/code/data/";
+char directoryLocation[] = "/home/root/";
 /* MD2K Configurations */
 // 1 minute = 6000 frames
 int TOTAL_FRAMES = 6000;

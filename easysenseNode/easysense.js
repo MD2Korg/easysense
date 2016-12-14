@@ -40,9 +40,8 @@ EasySense.prototype.sample = function(seconds, filebase) {
 
 
         console.log('Starting EasySense data collection');
-        console.log('/home/root/easysense/radar/easysense.sh' + ' /home/root/' + filebase + ' ' + (seconds*100));
-//        var radar = spawn('/home/root/easysense/radar/easysense.sh', ['/home/root/' + filebase, seconds*100]);
-        var radar = spawn('/home/code/runCollectData.sh');
+        console.log('/home/root/easysense/radar/easysense.sh' + ' ' + filebase + ' ' + (seconds*100));
+        var radar = spawn('/home/root/easysense/radar/easysense.sh', [filebase, seconds*100]);
 
         var interval = setInterval(function() {
             self.emit('progress', count++);
