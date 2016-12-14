@@ -34,9 +34,6 @@ char basename[80];
 
 
 
-int ECGIndex = 0;
-int radarIndex =1;
-int exitFlag = 0;
 void *RadarRead()
 {
 	sleep(3);
