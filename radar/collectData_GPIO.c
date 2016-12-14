@@ -600,7 +600,7 @@ system(command);
 }
 
 
-int main(void)
+int main(int argc, char **argv)
 {
 	unsigned char gpio_devicePower = 48;
 	unsigned char gpio_RF_vcc = 13;
