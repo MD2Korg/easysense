@@ -12,16 +12,7 @@
 
 /*gcc -I /usr/include/libftdi1/ radarMeasurePipelined.c  -lmpsse -lusb-1.0 -o radarMeasurePipelined.o */
 
-
-/* MD2K Configurations */
-
-#define RADAR_CONFIG "radarConfig"
-
-
-
-
-
-/*Structure for event asociated with a timer typedef struct*/ 
+/*Structure for event asociated with a timer typedef struct*/
 typedef struct {
 	struct itimerspec repeatPeriod;
 	int timerId;
@@ -49,13 +40,13 @@ double iterationsVal,avgFactorVal,dacMinVal,dacStepVal;
 #define ChipID 0x02
 #define ChipIDLength 0x02
 #define SampleReadOutCtrl 0x21
-#define SampleReadOutCtrlLength 0x02                 
+#define SampleReadOutCtrlLength 0x02
 unsigned char SampleReadOutCtrlData_0 = 0x0F;
 unsigned char SampleReadOutCtrlData_1 = 0x80; /* Downsampling is set to 0x00 and will be read from configuration file */
 #define SampleCtrl 0x22
 #define SampleCtrlLength 0x01
 #define SampleCtrlData_0 0x00
-#define ThresholdPowerDown 0x23 
+#define ThresholdPowerDown 0x23
 #define ThresholdPowerDownLength 0x01
 #define ThresholdPowerDownData_0 0x01
 #define ThresholdPowerDownData_0_Shutdown 0x03
@@ -140,8 +131,8 @@ unsigned char FocusMinData_1 = 0x00;
 #define PulseGeneratorCtrl 0x50
 #define PulseGeneratorCtrlLength 0x01
  #define PulseGeneratorCtrlData_0 0x42  /*low band + nominal */
-/*#define PulseGeneratorCtrlData_0 0x80  Medium + slow 
- #define PulseGeneratorCtrlData_0 0x02*/ /* Turn off */ 
+/*#define PulseGeneratorCtrlData_0 0x80  Medium + slow
+ #define PulseGeneratorCtrlData_0 0x02*/ /* Turn off */
  #define DACCtrl 0x58
 #define DACCtrlLength 0x02
 #define DACCtrlData_0 0x80
@@ -185,7 +176,7 @@ unsigned char FocusMinData_1 = 0x00;
 #define SampleDelayCoarseTune 0x6B
 #define SampleDelayCoarseTuneLength 0x02
 unsigned char SampleDelayCoarseTuneData_0 = 0x00; /* Read from Configuration file */
-unsigned char SampleDelayCoarseTuneData_1 = 0x00; 
+unsigned char SampleDelayCoarseTuneData_1 = 0x00;
 #define SampleDelayMediumTune 0x6C
 #define SampleDelayMediumTuneLength 0x01
 unsigned char SampleDelayMediumTuneData_0 = 0x00; /* Read from configuration file */
@@ -217,7 +208,7 @@ unsigned char SampleDelayMediumTuneData_0 = 0x00; /* Read from configuration fil
 
 /* Function declarations */
 void readConfigFile();
-void initializeRadar(struct mpsse_context *, char *);	
+void initializeRadar(struct mpsse_context *, char *);
 int checkInitializationRadar(struct mpsse_context * , char *);
 int initializeCheckRadar(struct mpsse_context * , char *);
 int kbhit();
@@ -244,15 +235,15 @@ void initializeRadar(struct mpsse_context * flash, char *command)
 	command[0] = SampleReadOutCtrl | WRITE;
 	command[1] = SampleReadOutCtrlLength;
 	command[2] = SampleReadOutCtrlData_0;
-	command[3] = SampleReadOutCtrlData_1;	
+	command[3] = SampleReadOutCtrlData_1;
 	Start(flash);
 	FastWrite(flash,command,4);
 	Stop(flash);
-	
+
 	/*Writing into SamplerCtrl*/
 	command[0] = SampleCtrl | WRITE;
 	command[1] = SampleCtrlLength;
-	command[2] = SampleCtrlData_0;	
+	command[2] = SampleCtrlData_0;
 	Start(flash);
 	FastWrite(flash,command,3);
 	Stop(flash);
@@ -276,15 +267,15 @@ void initializeRadar(struct mpsse_context * flash, char *command)
 	/*Writing into ThresholdCtrl*/
 	command[0] = ThresholdCtrl | WRITE;
 	command[1] = ThresholdCtrlLength;
-	command[2] = ThresholdCtrlData_0;		
+	command[2] = ThresholdCtrlData_0;
 	Start(flash);
 	FastWrite(flash,command,3);
 	Stop(flash);
-		
+
 
 	/*Writing into NormalPulsesPerStep*/
 	command[0] = NormalPulsesPerStep | WRITE;
-	command[1] = NormalPulsesPerStepLength; 
+	command[1] = NormalPulsesPerStepLength;
 	command[2] = NormalPulsesPerStepData_0;
 	command[3] = NormalPulsesPerStepData_1;
 	command[4] = NormalPulsesPerStepData_2;
@@ -293,30 +284,30 @@ void initializeRadar(struct mpsse_context * flash, char *command)
 	FastWrite(flash,command,6);
 	Stop(flash);
 
-	
+
 	/*Writing into FocusPulsesPerStep*/
 	command[0] = FocusPulsesPerStep | WRITE;
 	command[1] = FocusPulsesPerStepLength;
 	command[2] = FocusPulsesPerStepData_0;
 	command[3] = FocusPulsesPerStepData_1;
 	command[4] = FocusPulsesPerStepData_2;
-	command[5] = FocusPulsesPerStepData_3;		
+	command[5] = FocusPulsesPerStepData_3;
 	Start(flash);
 	FastWrite(flash,command,6);
 	Stop(flash);
 
 
 	/*Writing into DACFirstIterationSetupTime*/
-	command[0] = DACFirstIterationSetupTime | WRITE; 
+	command[0] = DACFirstIterationSetupTime | WRITE;
 	command[1] = DACFirstIterationSetupTimeLength;
 	command[2] = DACFirstIterationSetupTimeData_0;
-	command[3] = DACFirstIterationSetupTimeData_1; 
+	command[3] = DACFirstIterationSetupTimeData_1;
 	Start(flash);
 	FastWrite(flash,command,4);
 	Stop(flash);
 
-	
-	/*Writing into DACFirstStepSetupTime*/ 
+
+	/*Writing into DACFirstStepSetupTime*/
 	command[0] = DACFirstStepSetupTime | WRITE;
 	command[1] = DACFirstStepSetupTimeLength;
 	command[2] = DACFirstStepSetupTimeData_0;
@@ -324,25 +315,25 @@ void initializeRadar(struct mpsse_context * flash, char *command)
 	Start(flash);
 	FastWrite(flash,command,4);
 	Stop(flash);
-	
+
 	/*Writing into DACRegularSetupTime */
 	command[0] = DACRegularSetupTime | WRITE;
 	command[1] = DACRegularSetupTimeLength;
 	command[2] = DACRegularSetupTimeData_0;
-	command[3] = DACRegularSetupTimeData_1; 
-	Start(flash);
-	FastWrite(flash,command,4);
-	Stop(flash);	
-
-	/*Writing into DACLastIterationHoldTime*/ 
-	command[0] = DACLastIterationHoldTime | WRITE;
-	command[1] = DACLastIterationHoldTimeLength;
-	command[2] = DACLastIterationHoldTimeData_0;
-	command[3] = DACLastIterationHoldTimeData_1; 
+	command[3] = DACRegularSetupTimeData_1;
 	Start(flash);
 	FastWrite(flash,command,4);
 	Stop(flash);
-			
+
+	/*Writing into DACLastIterationHoldTime*/
+	command[0] = DACLastIterationHoldTime | WRITE;
+	command[1] = DACLastIterationHoldTimeLength;
+	command[2] = DACLastIterationHoldTimeData_0;
+	command[3] = DACLastIterationHoldTimeData_1;
+	Start(flash);
+	FastWrite(flash,command,4);
+	Stop(flash);
+
 
 	/*Writing into DACLastStepHoldTime */
 	command[0] = DACLastStepHoldTime | WRITE;
@@ -355,7 +346,7 @@ void initializeRadar(struct mpsse_context * flash, char *command)
 
 
 	/*Writing into DACRegularHoldTime */
-	command[0] = DACRegularHoldTime | WRITE; 
+	command[0] = DACRegularHoldTime | WRITE;
 	command[1] = DACRegularHoldTimeLength;
 	command[2] = DACRegularHoldTimeData_0;
 	command[3] = DACRegularHoldTimeData_1;
@@ -387,11 +378,11 @@ void initializeRadar(struct mpsse_context * flash, char *command)
 	command[0] = DACMin | WRITE;
 	command[1] = DACMinLength;
 	command[2] = DACMinData_0;
-	command[3] = DACMinData_1;	
+	command[3] = DACMinData_1;
 	Start(flash);
 	FastWrite(flash,command,4);
 	Stop(flash);
-	
+
 
 	/*Writing into DACstep*/
 	command[0] = DACstep | WRITE;
@@ -412,7 +403,7 @@ void initializeRadar(struct mpsse_context * flash, char *command)
 	FastWrite(flash,command,4);
 	Stop(flash);
 
-	
+
 	/*Writing into FocusMax*/
 	command[0] = FocusMax | WRITE;
 	command[1] = FocusMaxLength;
@@ -421,7 +412,7 @@ void initializeRadar(struct mpsse_context * flash, char *command)
 	Start(flash);
 	FastWrite(flash,command,4);
 	Stop(flash);
-	
+
 
 	/*Writing into FocusMin*/
 	command[0] = FocusMin | WRITE;
@@ -448,12 +439,12 @@ void initializeRadar(struct mpsse_context * flash, char *command)
 	Start(flash);
 	FastWrite(flash,command,3);
 	Stop(flash);
-		
+
 
 	/*Writing into SweepClkCtrl*/
 	command[0] = SweepClkCtrl | WRITE;
 	command[1] = SweepClkCtrlLength;
-	command[2] = SweepClkCtrlData_0;		
+	command[2] = SweepClkCtrlData_0;
 	Start(flash);
 	FastWrite(flash,command,3);
 	Stop(flash);
@@ -468,9 +459,9 @@ void initializeRadar(struct mpsse_context * flash, char *command)
 
 	/*Writing into DACCtrl*/
 	command[0] = DACCtrl | WRITE;
-	command[1] = DACCtrlLength; 
+	command[1] = DACCtrlLength;
 	command[2] = DACCtrlData_0;
-	command[3] = DACCtrlData_1; 		
+	command[3] = DACCtrlData_1;
 	Start(flash);
 	FastWrite(flash,command,4);
 	Stop(flash);
@@ -482,7 +473,7 @@ void initializeRadar(struct mpsse_context * flash, char *command)
 	Start(flash);
 	FastWrite(flash,command,3);
 	Stop(flash);
-	
+
 	/*Writing into StaggeredPRFCtrl*/
 	command[0] = StaggeredPRFCtrl | WRITE;
 	command[1] = StaggeredPRFCtrlLength;
@@ -492,7 +483,7 @@ void initializeRadar(struct mpsse_context * flash, char *command)
 	Stop(flash);
 
 	/*Writing into StaggeredPRFCtrlDelay*/
-	command[0] = StaggeredPRFDelay | WRITE;		
+	command[0] = StaggeredPRFDelay | WRITE;
 	command[1] = StaggeredPRFDelayLength;
 	command[2] = StaggeredPRFDelayData_0;
 	Start(flash);
@@ -503,11 +494,11 @@ void initializeRadar(struct mpsse_context * flash, char *command)
 	command[0] = LFSR5TapEnable | WRITE;
 	command[1] = LFSR5TapEnableLength;
 	command[2] = LFSR5TapEnableData_0;
-	command[3] = LFSR5TapEnableData_1;	
+	command[3] = LFSR5TapEnableData_1;
 	Start(flash);
 	FastWrite(flash,command,4);
 	Stop(flash);
-		
+
 	/*Writing into LFSR4TapEnable*/
 	command[0] = LFSR4TapEnable | WRITE;
 	command[1] = LFSR4TapEnableLength;
@@ -516,16 +507,16 @@ void initializeRadar(struct mpsse_context * flash, char *command)
 	Start(flash);
 	FastWrite(flash,command,4);
 	Stop(flash);
-		
+
 	/*Writing into LFSR3TapEnable*/
 	command[0] = LFSR3TapEnable | WRITE;
 	command[1] = LFSR3TapEnableLength;
 	command[2] = LFSR3TapEnableData_0;
-	command[3] = LFSR3TapEnableData_1; 
+	command[3] = LFSR3TapEnableData_1;
 	Start(flash);
 	FastWrite(flash,command,4);
 	Stop(flash);
-	
+
 	/*Writing into LFSR2TapEnable*/
 	command[0] = LFSR2TapEnable | WRITE;
 	command[1] = LFSR2TapEnableLength;
@@ -534,7 +525,7 @@ void initializeRadar(struct mpsse_context * flash, char *command)
 	Start(flash);
 	FastWrite(flash,command,4);
 	Stop(flash);
-	
+
 	/*Writing into LFSR1TapEnable*/
 	command[0] = LFSR1TapEnable | WRITE;
 	command[1] = LFSR1TapEnableLength;
@@ -543,7 +534,7 @@ void initializeRadar(struct mpsse_context * flash, char *command)
 	Start(flash);
 	FastWrite(flash,command,4);
 	Stop(flash);
-	
+
 	/*Writing into LFSR0TapEnable*/
 	command[0] = LFSR0TapEnable | WRITE;
 	command[1] = LFSR0TapEnableLength;
@@ -552,7 +543,7 @@ void initializeRadar(struct mpsse_context * flash, char *command)
 	Start(flash);
 	FastWrite(flash,command,4);
 	Stop(flash);
-	
+
 	/*Writing into TimingCtrl*/
 	command[0] = TimingCtrl | WRITE;
 	command[1] = TimingCtrlLength;
@@ -560,7 +551,7 @@ void initializeRadar(struct mpsse_context * flash, char *command)
 	Start(flash);
 	FastWrite(flash,command,3);
 	Stop(flash);
-	
+
 	/*Writing into SampleDelayCoarseTune*/
 	command[0] = SampleDelayCoarseTune | WRITE;
 	command[1] = SampleDelayCoarseTuneLength;
@@ -569,7 +560,7 @@ void initializeRadar(struct mpsse_context * flash, char *command)
 	Start(flash);
 	FastWrite(flash,command,4);
 	Stop(flash);
-	
+
 	/*Writing into SampleDelayMediumTune*/
 	command[0] = SampleDelayMediumTune | WRITE;
 	command[1] = SampleDelayMediumTuneLength;
@@ -577,7 +568,7 @@ void initializeRadar(struct mpsse_context * flash, char *command)
 	Start(flash);
 	FastWrite(flash,command,3);
 	Stop(flash);
-		
+
 	/*Writing into SampleDelayFineTune*/
 	command[0] = SampleDelayFineTune | WRITE;
 	command[1] = SampleDelayFineTuneLength;
@@ -585,7 +576,7 @@ void initializeRadar(struct mpsse_context * flash, char *command)
 	Start(flash);
 	FastWrite(flash,command,3);
 	Stop(flash);
-	
+
 	/*Writing into SendPulseDelayCoarseTune*/
 	command[0] = SendPulseDelayCoarseTune | WRITE;
 	command[1] = SendPulseDelayCoarseTuneLength;
@@ -602,7 +593,7 @@ void initializeRadar(struct mpsse_context * flash, char *command)
 	Start(flash);
 	FastWrite(flash,command,3);
 	Stop(flash);
-	
+
 	/*Writing into SendPulseDelayFineTune*/
 	command[0] = SendPulseDelayFineTune | WRITE;
 	command[1] = SendPulseDelayFineTuneLength;
@@ -634,10 +625,10 @@ void initializeRadar(struct mpsse_context * flash, char *command)
 int checkInitializationRadar(struct mpsse_context * flash, char *command)
 {
 	unsigned char readbits1[24];
-	int flag = 12; 
+	int flag = 12;
 	command[0] = SampleReadOutCtrl | READ;
 	command[1] = SampleReadOutCtrlLength;
-	
+
 	Start(flash);
 	FastWrite(flash, command, 2);
 	FastRead(flash, readbits1,2);
@@ -650,7 +641,7 @@ int checkInitializationRadar(struct mpsse_context * flash, char *command)
 
 
 	command[0] = SampleCtrl | READ;
-	command[1] = SampleCtrlLength;	
+	command[1] = SampleCtrlLength;
 	Start(flash);
 	FastWrite(flash, command, 2);
 	FastRead(flash, readbits1,1);
@@ -660,10 +651,10 @@ int checkInitializationRadar(struct mpsse_context * flash, char *command)
 				{
 		flag = 0;
 		printf("Problem in SampleCtrl\n");
-		}	
+		}
 
 	command[0] = ThresholdPowerDown | READ;
-	command[1] = ThresholdPowerDownLength; 	
+	command[1] = ThresholdPowerDownLength;
 	Start(flash);
 	FastWrite(flash, command, 2);
 	FastRead(flash, readbits1,1);
@@ -673,10 +664,10 @@ int checkInitializationRadar(struct mpsse_context * flash, char *command)
 		{
 		flag = 0;
 		printf("Problem in ThresholdPowerDown\n");
-		}	
-	
+		}
+
 	command[0] = SampleInputCtrl | READ;
-	command[1] = SampleInputCtrlLength;		
+	command[1] = SampleInputCtrlLength;
 	Start(flash);
 	FastWrite(flash, command, 2);
 	FastRead(flash, readbits1,1);
@@ -698,7 +689,7 @@ int checkInitializationRadar(struct mpsse_context * flash, char *command)
 		{
 		flag = 0;
 		printf("Problem in ThresholdCtrl\n");
-		}	
+		}
 
 	command[0] = NormalPulsesPerStep | READ;
 	command[1] = NormalPulsesPerStepLength;
@@ -707,12 +698,12 @@ int checkInitializationRadar(struct mpsse_context * flash, char *command)
 	FastRead(flash, readbits1,4);
 	Stop(flash);
 
-	if(readbits1[0] != NormalPulsesPerStepData_0 || readbits1[1] != NormalPulsesPerStepData_1 || 
+	if(readbits1[0] != NormalPulsesPerStepData_0 || readbits1[1] != NormalPulsesPerStepData_1 ||
 readbits1[2] != NormalPulsesPerStepData_2 || readbits1[3] != NormalPulsesPerStepData_3)
 		{
 		flag = 0;
 		printf("Problem in NormalPulsesPerStep\n");
-		}		
+		}
 
 	command[0] = FocusPulsesPerStep | READ;
 	command[1] = FocusPulsesPerStepLength;
@@ -721,7 +712,7 @@ readbits1[2] != NormalPulsesPerStepData_2 || readbits1[3] != NormalPulsesPerStep
 	FastRead(flash, readbits1,4);
 	Stop(flash);
 
-	if(readbits1[0] != FocusPulsesPerStepData_0 || readbits1[1] != FocusPulsesPerStepData_1 
+	if(readbits1[0] != FocusPulsesPerStepData_0 || readbits1[1] != FocusPulsesPerStepData_1
 || readbits1[2] != FocusPulsesPerStepData_2 || readbits1[3] != FocusPulsesPerStepData_3)
 		{
 		flag = 0;
@@ -739,10 +730,10 @@ readbits1[2] != NormalPulsesPerStepData_2 || readbits1[3] != NormalPulsesPerStep
 		{
 		flag = 0;
 		printf("Problem in DACFirstIterationSetupTime\n");
-		}	
+		}
 
 	command[0] = DACFirstStepSetupTime | READ;
-	command[1] = DACFirstStepSetupTimeLength;	
+	command[1] = DACFirstStepSetupTimeLength;
 	Start(flash);
 	FastWrite(flash, command, 2);
 	FastRead(flash, readbits1,2);
@@ -752,7 +743,7 @@ readbits1[2] != NormalPulsesPerStepData_2 || readbits1[3] != NormalPulsesPerStep
 		{
 		flag = 0;
 		printf("Problem in DACFirstStepSetupTime\n");
-		}	
+		}
 
 	command[0] = DACRegularSetupTime | READ;
 	command[1] = DACRegularSetupTimeLength;
@@ -764,7 +755,7 @@ readbits1[2] != NormalPulsesPerStepData_2 || readbits1[3] != NormalPulsesPerStep
 		{
 		flag = 0;
 		printf("Problem in DACRegularSetupTime\n");
-		}		
+		}
 
 	command[0] = DACLastIterationHoldTime | READ;
 	command[1] = DACLastIterationHoldTimeLength;
@@ -776,7 +767,7 @@ readbits1[2] != NormalPulsesPerStepData_2 || readbits1[3] != NormalPulsesPerStep
 		{
 		flag = 0;
 		printf("Problem in DACLastIterationHoldTime\n");
-		}		
+		}
 
 	command[0] = DACLastStepHoldTime | READ;
 	command[1] = DACLastStepHoldTimeLength;
@@ -788,7 +779,7 @@ readbits1[2] != NormalPulsesPerStepData_2 || readbits1[3] != NormalPulsesPerStep
 		{
 		flag = 0;
 		printf("Problem in DACLastStepHoldTime\n");
-		}		
+		}
 
 	command[0] = DACRegularHoldTime | READ;
 	command[1] = DACRegularHoldTimeLength;
@@ -800,10 +791,10 @@ readbits1[2] != NormalPulsesPerStepData_2 || readbits1[3] != NormalPulsesPerStep
 		{
 		flag = 0;
 		printf("Problem in DACRegularHoldTime\n");
-		}		
+		}
 
 	command[0] = SweepMainCtrl | READ;
-	command[1] = SweepMainCtrlLength;	
+	command[1] = SweepMainCtrlLength;
 	Start(flash);
 	FastWrite(flash, command, 2);
 	FastRead(flash, readbits1,1);
@@ -825,7 +816,7 @@ readbits1[2] != NormalPulsesPerStepData_2 || readbits1[3] != NormalPulsesPerStep
 		{
 		flag = 0;
 		printf("Problem in DACMax\n");
-		}	
+		}
 
 	command[0] = DACMin | READ;
 	command[1] = DACMinLength;
@@ -837,7 +828,7 @@ readbits1[2] != NormalPulsesPerStepData_2 || readbits1[3] != NormalPulsesPerStep
 		{
 		flag = 0;
 		printf("Problem in DACMin\n");
-		}	
+		}
 
 	command[0] = DACstep | READ;
 	command[1] = DACstepLength;
@@ -845,15 +836,15 @@ readbits1[2] != NormalPulsesPerStepData_2 || readbits1[3] != NormalPulsesPerStep
 	FastWrite(flash, command , 2);
 	FastRead(flash, readbits1,2);
 	Stop(flash);
-	
+
 	if(readbits1[0] != DACstepData_0 || readbits1[1] !=DACstepData_1)
 		{
 		flag = 0;
 		printf("Problem in DACstep\n");
-		}	
+		}
 
 	command[0] = Iterations | READ;
-	command[1] = IterationsLength;	
+	command[1] = IterationsLength;
 	Start(flash);
 	FastWrite(flash, command, 2);
 	FastRead(flash, readbits1,2);
@@ -870,12 +861,12 @@ readbits1[2] != NormalPulsesPerStepData_2 || readbits1[3] != NormalPulsesPerStep
 	FastWrite(flash, command, 2);
 	FastRead(flash, readbits1,2);
 	Stop(flash);
-	
+
 	if(readbits1[0] != FocusMaxData_0 || readbits1[1] != FocusMaxData_1)
 		{
 		flag = 0;
 		printf("Problem in FocusMax\n");
-		}	
+		}
 
 	command[0] = FocusMin | READ;
 	command[1] = FocusMinLength;
@@ -887,7 +878,7 @@ readbits1[2] != NormalPulsesPerStepData_2 || readbits1[3] != NormalPulsesPerStep
 		{
 		flag = 0;
 		printf("Problem in FocusMin\n");
-		}	
+		}
 
 	command[0] = FocusSetupTime | READ;
 	command[1] = FocusSetupTimeLength;
@@ -899,10 +890,10 @@ readbits1[2] != NormalPulsesPerStepData_2 || readbits1[3] != NormalPulsesPerStep
 		{
 		flag = 0;
 		printf("Problem in FocusSetupTime\n");
-		}	
+		}
 
 	command[0] = FocusHoldTime | READ;
-	command[1] = FocusHoldTimeLength; 
+	command[1] = FocusHoldTimeLength;
 	Start(flash);
 	FastWrite(flash, command , 2);
 	FastRead(flash, readbits1,1);
@@ -911,7 +902,7 @@ readbits1[2] != NormalPulsesPerStepData_2 || readbits1[3] != NormalPulsesPerStep
 		{
 		flag = 0;
 		printf("Problem in FocusHoldTime\n");
-		}		
+		}
 
 	command[0] = SweepClkCtrl | READ;
 	command[1] = SweepClkCtrlLength;
@@ -931,12 +922,12 @@ readbits1[2] != NormalPulsesPerStepData_2 || readbits1[3] != NormalPulsesPerStep
 	FastWrite(flash, command, 2);
 	FastRead(flash, readbits1,1);
 	Stop(flash);
-	
+
 	if(readbits1[0] != PulseGeneratorCtrlData_0)
 		{
 		flag = 0;
 		printf("Problem in PulseGeneratorCtrl\n");
-		}	
+		}
 
 	command[0]  =DACCtrl | READ;
 	command[1] = DACCtrlLength;
@@ -948,7 +939,7 @@ readbits1[2] != NormalPulsesPerStepData_2 || readbits1[3] != NormalPulsesPerStep
 		{
 		flag = 0;
 		printf("Problem in DACCtrl\n");
-		}	
+		}
 
 	command[0] = MCLKCtrl | READ;
 	command[1] = MCLKCtrlLength;
@@ -962,7 +953,7 @@ readbits1[2] != NormalPulsesPerStepData_2 || readbits1[3] != NormalPulsesPerStep
 		printf("Problem in MCLKCtrl\n");
 		}
 	command[0] = StaggeredPRFCtrl | READ;
-	command[1] = StaggeredPRFCtrlLength;	
+	command[1] = StaggeredPRFCtrlLength;
 	Start(flash);
 	FastWrite(flash, command, 2);
 	FastRead(flash, readbits1,1);
@@ -971,7 +962,7 @@ readbits1[2] != NormalPulsesPerStepData_2 || readbits1[3] != NormalPulsesPerStep
 		{
 		flag = 0;
 		printf("Problem in StaggeredPRFCtrl\n");
-		}	
+		}
 
 	command[0] = StaggeredPRFDelay | READ;
 	command[1] = StaggeredPRFDelayLength;
@@ -984,7 +975,7 @@ readbits1[2] != NormalPulsesPerStepData_2 || readbits1[3] != NormalPulsesPerStep
 		flag = 0;
 		printf("Problem in StaggeredPRFDelay\n");
 		}
-	
+
 	command[0] = LFSR5TapEnable | READ;
 	command[1] = LFSR5TapEnableLength;
 	Start(flash);
@@ -995,9 +986,9 @@ readbits1[2] != NormalPulsesPerStepData_2 || readbits1[3] != NormalPulsesPerStep
 		{
 		flag = 0;
 		printf("Problem in LFSR5TapEnable\n");
-		}		
+		}
 
-	command[0] = LFSR4TapEnable | READ; 
+	command[0] = LFSR4TapEnable | READ;
 	command[1] = LFSR4TapEnableLength;
 	Start(flash);
 	FastWrite(flash, command, 2);
@@ -1066,7 +1057,7 @@ readbits1[2] != NormalPulsesPerStepData_2 || readbits1[3] != NormalPulsesPerStep
 		{
 		flag = 0;
 		printf("Problem in TimingCtrl\n");
-		}		
+		}
 
 	command[0] = SampleDelayCoarseTune | READ;
 	command[1] = SampleDelayCoarseTuneLength;
@@ -1089,10 +1080,10 @@ readbits1[2] != NormalPulsesPerStepData_2 || readbits1[3] != NormalPulsesPerStep
 		{
 		flag = 0;
 		printf("Problem in SampleDelayMediumTune\n");
-		}	
+		}
 
 	command[0] = SampleDelayFineTune | READ;
-	command[1] = SampleDelayFineTuneLength;	
+	command[1] = SampleDelayFineTuneLength;
 	Start(flash);
 	FastWrite(flash, command, 2);
 	FastRead(flash, readbits1,1);
@@ -1101,10 +1092,10 @@ readbits1[2] != NormalPulsesPerStepData_2 || readbits1[3] != NormalPulsesPerStep
 		{
 		flag = 0;
 		printf("Problem in SampleDelayFineTune\n");
-		}	
+		}
 
 	command[0] = SendPulseDelayCoarseTune | READ;
-	command[1] = SendPulseDelayCoarseTuneLength;	
+	command[1] = SendPulseDelayCoarseTuneLength;
 	Start(flash);
 	FastWrite(flash, command, 2);
 	FastRead(flash, readbits1,2);
@@ -1113,7 +1104,7 @@ readbits1[2] != NormalPulsesPerStepData_2 || readbits1[3] != NormalPulsesPerStep
 		{
 		flag = 0;
 		printf("Problem in SendPulseDelayCoarseTune\n");
-		}	
+		}
 
 	command[0] = SendPulseDelayMediumTune | READ;
 	command[1] = SendPulseDelayMediumTuneLength;
@@ -1127,7 +1118,7 @@ readbits1[2] != NormalPulsesPerStepData_2 || readbits1[3] != NormalPulsesPerStep
 		printf("Problem in SendPulseDelayMediumTune\n");
 		}
 	command[0] = SendPulseDelayFineTune | READ;
-	command[1] = SendPulseDelayFineTuneLength;		
+	command[1] = SendPulseDelayFineTuneLength;
 	Start(flash);
 	FastWrite(flash, command, 2);
 	FastRead(flash, readbits1,1);
@@ -1138,7 +1129,7 @@ readbits1[2] != NormalPulsesPerStepData_2 || readbits1[3] != NormalPulsesPerStep
 		printf("Problem in SendPulseDelayFineTune\n");
 		}
 	command[0] = TimingCalibrationCtrl | READ;
-	command[1] = TimingCalibrationCtrlLength;	
+	command[1] = TimingCalibrationCtrlLength;
 	Start(flash);
 	FastWrite(flash, command, 2);
 	FastRead(flash, readbits1,1);
@@ -1149,7 +1140,7 @@ readbits1[2] != NormalPulsesPerStepData_2 || readbits1[3] != NormalPulsesPerStep
 		printf("Problem in TimingCalibrationCtrl\n");
 		}
 	command[0] = MCLKOutputCtrl | READ;
-	command[1] = MCLKOutputCtrlLength;	
+	command[1] = MCLKOutputCtrlLength;
 	Start(flash);
 	FastWrite(flash, command, 2);
 	FastRead(flash, readbits1,1);
@@ -1165,7 +1156,7 @@ readbits1[2] != NormalPulsesPerStepData_2 || readbits1[3] != NormalPulsesPerStep
 /*Initializes and check's radar configurations. Returns 0 on error.*/
 int initializeCheckRadar(struct mpsse_context * flash, char *command)
 {
-int flag =12;	
+int flag =12;
 initializeRadar(flash, command);
 flag = checkInitializationRadar(flash, command);
 return flag;
@@ -1177,7 +1168,7 @@ return flag;
 int kbhit()
 {
     struct timeval tv;
-    fd_set fds; 
+    fd_set fds;
     tv.tv_sec = 0;
     tv.tv_usec = 0;
     FD_ZERO(&fds);
@@ -1196,12 +1187,12 @@ void clearLastSweepLoadOutput(struct mpsse_context * flash)
 	command[0] = ResetCounters | WRITE;
 	command[1] = DataLengthCommandStrobe;
 	Start(flash);
-	FastWrite(flash,command,2);	
+	FastWrite(flash,command,2);
 	Stop(flash);
 
 	/*Load Output buffer*/
 	command[0] = LoadOutputBuffer | WRITE;
-	command[1] = DataLengthCommandStrobe;	
+	command[1] = DataLengthCommandStrobe;
 	Start(flash);
 	FastWrite(flash,command,2);
 	Stop(flash);
@@ -1215,7 +1206,7 @@ void loadOuputBuffer(struct mpsse_context * flash)
 
 	/*Load Output buffer*/
 	command[0] = LoadOutputBuffer | WRITE;
-	command[1] = DataLengthCommandStrobe;	
+	command[1] = DataLengthCommandStrobe;
 	Start(flash);
 	FastWrite(flash,command,2);
 	Stop(flash);
@@ -1231,14 +1222,14 @@ void startRadarSweep(struct mpsse_context * flash)
 	command[0] = ResetCounters | WRITE;
 	command[1] = DataLengthCommandStrobe;
 	Start(flash);
-	FastWrite(flash,command,2);	
+	FastWrite(flash,command,2);
 	Stop(flash);
 	/*Start sweep*/
 	command[0] = StartSweep | WRITE;
 	command[1] = DataLengthCommandStrobe;
 	Start(flash);
 	FastWrite(flash,command,2);
-	Stop(flash);		
+	Stop(flash);
 }
 
 /* Waits until the sweep status bits becomes 0 indicating the completion of sweep. */
@@ -1246,30 +1237,30 @@ void monitorSweepStatus(struct mpsse_context * flash)
 {
 	unsigned char readbits1[24];
 	char command[10] ={0};
-	int i;		
+	int i;
 	/*Monitor Status*/
 	while(1)
 	{
 	/*printf("Wait\n");*/
 	/* Checking Sweep status bits */
 	command[0] = SweepControllerStatus | READ;
-	command[1] = SweepControllerStatusLength;	
+	command[1] = SweepControllerStatusLength;
 	Start(flash);
 	FastWrite(flash,command,2);
 	FastRead(flash, readbits1,2);
-	Stop(flash);		
+	Stop(flash);
 	if((readbits1[0] & 0x80)==0)
 		{
 		/*printf("Sampling over\n");*/
 		break;
 		}
- 	
+
 	}
 
 }
 
 /*Switching sequence is generated for the Mux control signal to select the required receiver antenna.
- Counter	- GPIO 3 	GPIO2	GPIO1	GPIO0 
+ Counter	- GPIO 3 	GPIO2	GPIO1	GPIO0
 	0	    0		0	0	0
 	1	    0		0	0	1
 	2	    0		0	1	0
@@ -1285,21 +1276,21 @@ void monitorSweepStatus(struct mpsse_context * flash)
 	12	    1		1	0	0
 	13	    1		1	0	1
 	14	    1		1	1	0
-	15	    1		1	1	1		    
+	15	    1		1	1	1
 */
 void switchingSequencer(struct mpsse_context * flash, int * counterRadarSelect)
 {
-	int idxSelect[16] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};	
-	
-	*counterRadarSelect = rand() % 16;	
+	int idxSelect[16] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
+
+	*counterRadarSelect = rand() % 16;
 	switch(idxSelect[*counterRadarSelect])
-	{	
+	{
 		case 0: flash->pidle = (flash->pidle & (~GPIO0) & (~GPIO2) & (~GPIO3) & (~GPIO1));
 			flash->pstart = (flash->pstart & (~GPIO0) & (~GPIO2) & (~GPIO3) & (~GPIO1));
 			flash->pstop = (flash->pstop & (~GPIO0) & (~GPIO2) &(~GPIO3) &(~GPIO1));
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
 			break;
-		case 1: 
+		case 1:
 			flash->pidle = (flash->pidle & (~GPIO2) & (~GPIO3) & (~GPIO1));
 			flash->pidle = flash->pidle | (GPIO0) ;
 			flash->pstart = (flash->pstart & (~GPIO2) & (~GPIO3) & (~GPIO1));
@@ -1308,16 +1299,16 @@ void switchingSequencer(struct mpsse_context * flash, int * counterRadarSelect)
 			flash->pstop = flash->pstop | (GPIO0) ;
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
 			break;
-		case 2: 
+		case 2:
 			flash->pidle = (flash->pidle & (~GPIO0) & (~GPIO3) &(~GPIO2));
-			flash->pidle = flash->pidle | (GPIO1); 
+			flash->pidle = flash->pidle | (GPIO1);
 			flash->pstart = (flash->pstart & (~GPIO0) & (~GPIO3) & (~GPIO2));
-			flash->pstart = flash->pstart | (GPIO1); 
+			flash->pstart = flash->pstart | (GPIO1);
 			flash->pstop = (flash->pstop & (~GPIO0) & (~GPIO3) & (~GPIO2));
-			flash->pstop = flash->pstop | (GPIO1); 
+			flash->pstop = flash->pstop | (GPIO1);
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
 			break;
-		case 3: 
+		case 3:
 			flash->pidle = (flash->pidle  & (~GPIO3) & (~GPIO2));
 			flash->pidle = (flash->pidle | (GPIO0) | (GPIO1));
 			flash->pstart = (flash->pstart  & (~GPIO3) & (~GPIO2)) ;
@@ -1326,16 +1317,16 @@ void switchingSequencer(struct mpsse_context * flash, int * counterRadarSelect)
 			flash->pstop = (flash->pstop | (GPIO0) | (GPIO1));
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
 			break;
-		case 4: 
+		case 4:
 			flash->pidle = flash->pidle & (~GPIO0) & (~GPIO1) & (~GPIO3);
-			flash->pidle = flash->pidle  | (GPIO2);		
+			flash->pidle = flash->pidle  | (GPIO2);
 			flash->pstart = flash->pstart & (~GPIO0) & (~GPIO1) & (~GPIO3);
 			flash->pstart = flash->pstart  | (GPIO2);
 			flash->pstop = flash->pstop & (~GPIO0) & (~GPIO1) & (~GPIO3);
 			flash->pstop = flash->pstop  | (GPIO2);
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
 			break;
-		case 5: 
+		case 5:
 			flash->pidle = flash->pidle & (~GPIO3) & (~GPIO1);
 			flash->pidle = flash->pidle | (GPIO0) | (GPIO2);
 			flash->pstart = flash->pstart & (~GPIO3) & (~GPIO1);
@@ -1344,9 +1335,9 @@ void switchingSequencer(struct mpsse_context * flash, int * counterRadarSelect)
 			flash->pstop = flash->pstop | (GPIO0) | (GPIO2);
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
 			break;
-		case 6: 
+		case 6:
 			flash->pidle = flash->pidle & (~GPIO3) & (~GPIO0);
-			flash->pidle = flash->pidle | (GPIO2) | (GPIO1) ; 
+			flash->pidle = flash->pidle | (GPIO2) | (GPIO1) ;
 			flash->pstart = flash->pstart & (~GPIO3) & (~GPIO0);
 			flash->pstart = flash->pstart | (GPIO2) | (GPIO1);
 			flash->pstop = flash->pstop & (~GPIO3) & (~GPIO0);
@@ -1360,7 +1351,7 @@ void switchingSequencer(struct mpsse_context * flash, int * counterRadarSelect)
 			flash->pstop = flash->pstop & (~GPIO3) ;
 			flash->pstop = (flash->pstop | (GPIO0) | (GPIO1) | (GPIO2));
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
-			break;	
+			break;
 		case 8: flash->pidle = (flash->pidle & (~GPIO0) & (~GPIO2)  & (~GPIO1));
 			flash->pidle = flash->pidle  | (GPIO3);
 			flash->pstart = (flash->pstart & (~GPIO0) & (~GPIO2) & (~GPIO1));
@@ -1369,7 +1360,7 @@ void switchingSequencer(struct mpsse_context * flash, int * counterRadarSelect)
 			flash->pstop = flash->pstop | (GPIO3);
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
 			break;
-		case 9: 
+		case 9:
 			flash->pidle = (flash->pidle & (~GPIO2) & (~GPIO1));
 			flash->pidle = flash->pidle | (GPIO0) | (GPIO3);
 			flash->pstart = (flash->pstart & (~GPIO2) & (~GPIO1));
@@ -1378,16 +1369,16 @@ void switchingSequencer(struct mpsse_context * flash, int * counterRadarSelect)
 			flash->pstop = flash->pstop | (GPIO0) | (GPIO3);
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
 			break;
-		case 10: 
+		case 10:
 			flash->pidle = (flash->pidle & (~GPIO0)  &(~GPIO2));
-			flash->pidle = flash->pidle | (GPIO1) | (GPIO3); 
+			flash->pidle = flash->pidle | (GPIO1) | (GPIO3);
 			flash->pstart = (flash->pstart & (~GPIO0) & (~GPIO2));
-			flash->pstart = flash->pstart | (GPIO1) | (GPIO3); 
+			flash->pstart = flash->pstart | (GPIO1) | (GPIO3);
 			flash->pstop = (flash->pstop & (~GPIO0) & (~GPIO2));
-			flash->pstop = flash->pstop | (GPIO1) | (GPIO3); 
+			flash->pstop = flash->pstop | (GPIO1) | (GPIO3);
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
 			break;
-		case 11: 
+		case 11:
 			flash->pidle = (flash->pidle  & (~GPIO2));
 			flash->pidle = (flash->pidle | (GPIO0) | (GPIO1) | (GPIO3));
 			flash->pstart = (flash->pstart & (~GPIO2)) ;
@@ -1396,16 +1387,16 @@ void switchingSequencer(struct mpsse_context * flash, int * counterRadarSelect)
 			flash->pstop = (flash->pstop | (GPIO0) | (GPIO1) | (GPIO3));
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
 			break;
-		case 12: 
+		case 12:
 			flash->pidle = flash->pidle & (~GPIO0) & (~GPIO1) ;
-			flash->pidle = flash->pidle  | (GPIO2) | (GPIO3);		
+			flash->pidle = flash->pidle  | (GPIO2) | (GPIO3);
 			flash->pstart = flash->pstart & (~GPIO0) & (~GPIO1);
 			flash->pstart = flash->pstart  | (GPIO2) | (GPIO3);
 			flash->pstop = flash->pstop & (~GPIO0) & (~GPIO1);
 			flash->pstop = flash->pstop  | (GPIO2) | (GPIO3);
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
 			break;
-		case 13: 
+		case 13:
 			flash->pidle = flash->pidle & (~GPIO1);
 			flash->pidle = flash->pidle | (GPIO0) | (GPIO2) | (GPIO3);
 			flash->pstart = flash->pstart & (~GPIO1);
@@ -1414,29 +1405,29 @@ void switchingSequencer(struct mpsse_context * flash, int * counterRadarSelect)
 			flash->pstop = flash->pstop | (GPIO0) | (GPIO2) | (GPIO3);
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
 			break;
-		case 14: 
+		case 14:
 			flash->pidle = flash->pidle & (~GPIO0);
-			flash->pidle = flash->pidle | (GPIO2) | (GPIO1) | (GPIO3) ; 
+			flash->pidle = flash->pidle | (GPIO2) | (GPIO1) | (GPIO3) ;
 			flash->pstart = flash->pstart & (~GPIO0);
 			flash->pstart = flash->pstart | (GPIO2) | (GPIO1) | (GPIO3);
 			flash->pstop = flash->pstop  & (~GPIO0);
 			flash->pstop = flash->pstop | (GPIO2) | (GPIO1) | (GPIO3);
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
 			break;
-		case 15: 
+		case 15:
 			flash->pidle = (flash->pidle | (GPIO0) | (GPIO1) | (GPIO2) | (GPIO3));
 			flash->pstart = (flash->pstart | (GPIO0) | (GPIO1) | (GPIO2) | (GPIO3));
 			flash->pstop = (flash->pstop | (GPIO0) | (GPIO1) | (GPIO2) | (GPIO3));
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
-			break;	
+			break;
 
 	}
-} 
+}
 
 
 
 /*Switching sequence is generated for the Mux control signal to select the required receiver antenna.
- Counter	- GPIO 3 	GPIO2	GPIO1	GPIO0 
+ Counter	- GPIO 3 	GPIO2	GPIO1	GPIO0
 	0	    0		0	0	0
 	1	    0		0	0	1
 	2	    0		0	1	0
@@ -1452,21 +1443,21 @@ void switchingSequencer(struct mpsse_context * flash, int * counterRadarSelect)
 	12	    1		1	0	0
 	13	    1		1	0	1
 	14	    1		1	1	0
-	15	    1		1	1	1		    
+	15	    1		1	1	1
 */
 void switchingSequencerCalib(struct mpsse_context * flash, int * counterRadarSelect)
 {
-	int idxSelect[16] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};	
+	int idxSelect[16] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
 	*counterRadarSelect = (*counterRadarSelect + 1) % 16;
 	/* *counterRadarSelect = 1; */
 	switch(idxSelect[*counterRadarSelect])
-	{	
+	{
 		case 0: flash->pidle = (flash->pidle & (~GPIO0) & (~GPIO2) & (~GPIO3) & (~GPIO1));
 			flash->pstart = (flash->pstart & (~GPIO0) & (~GPIO2) & (~GPIO3) & (~GPIO1));
 			flash->pstop = (flash->pstop & (~GPIO0) & (~GPIO2) &(~GPIO3) &(~GPIO1));
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
 			break;
-		case 1: 
+		case 1:
 			flash->pidle = (flash->pidle & (~GPIO2) & (~GPIO3) & (~GPIO1));
 			flash->pidle = flash->pidle | (GPIO0) ;
 			flash->pstart = (flash->pstart & (~GPIO2) & (~GPIO3) & (~GPIO1));
@@ -1475,16 +1466,16 @@ void switchingSequencerCalib(struct mpsse_context * flash, int * counterRadarSel
 			flash->pstop = flash->pstop | (GPIO0) ;
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
 			break;
-		case 2: 
+		case 2:
 			flash->pidle = (flash->pidle & (~GPIO0) & (~GPIO3) &(~GPIO2));
-			flash->pidle = flash->pidle | (GPIO1); 
+			flash->pidle = flash->pidle | (GPIO1);
 			flash->pstart = (flash->pstart & (~GPIO0) & (~GPIO3) & (~GPIO2));
-			flash->pstart = flash->pstart | (GPIO1); 
+			flash->pstart = flash->pstart | (GPIO1);
 			flash->pstop = (flash->pstop & (~GPIO0) & (~GPIO3) & (~GPIO2));
-			flash->pstop = flash->pstop | (GPIO1); 
+			flash->pstop = flash->pstop | (GPIO1);
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
 			break;
-		case 3: 
+		case 3:
 			flash->pidle = (flash->pidle  & (~GPIO3) & (~GPIO2));
 			flash->pidle = (flash->pidle | (GPIO0) | (GPIO1));
 			flash->pstart = (flash->pstart  & (~GPIO3) & (~GPIO2)) ;
@@ -1493,16 +1484,16 @@ void switchingSequencerCalib(struct mpsse_context * flash, int * counterRadarSel
 			flash->pstop = (flash->pstop | (GPIO0) | (GPIO1));
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
 			break;
-		case 4: 
+		case 4:
 			flash->pidle = flash->pidle & (~GPIO0) & (~GPIO1) & (~GPIO3);
-			flash->pidle = flash->pidle  | (GPIO2);		
+			flash->pidle = flash->pidle  | (GPIO2);
 			flash->pstart = flash->pstart & (~GPIO0) & (~GPIO1) & (~GPIO3);
 			flash->pstart = flash->pstart  | (GPIO2);
 			flash->pstop = flash->pstop & (~GPIO0) & (~GPIO1) & (~GPIO3);
 			flash->pstop = flash->pstop  | (GPIO2);
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
 			break;
-		case 5: 
+		case 5:
 			flash->pidle = flash->pidle & (~GPIO3) & (~GPIO1);
 			flash->pidle = flash->pidle | (GPIO0) | (GPIO2);
 			flash->pstart = flash->pstart & (~GPIO3) & (~GPIO1);
@@ -1511,9 +1502,9 @@ void switchingSequencerCalib(struct mpsse_context * flash, int * counterRadarSel
 			flash->pstop = flash->pstop | (GPIO0) | (GPIO2);
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
 			break;
-		case 6: 
+		case 6:
 			flash->pidle = flash->pidle & (~GPIO3) & (~GPIO0);
-			flash->pidle = flash->pidle | (GPIO2) | (GPIO1) ; 
+			flash->pidle = flash->pidle | (GPIO2) | (GPIO1) ;
 			flash->pstart = flash->pstart & (~GPIO3) & (~GPIO0);
 			flash->pstart = flash->pstart | (GPIO2) | (GPIO1);
 			flash->pstop = flash->pstop & (~GPIO3) & (~GPIO0);
@@ -1527,7 +1518,7 @@ void switchingSequencerCalib(struct mpsse_context * flash, int * counterRadarSel
 			flash->pstop = flash->pstop & (~GPIO3) ;
 			flash->pstop = (flash->pstop | (GPIO0) | (GPIO1) | (GPIO2));
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
-			break;	
+			break;
 		case 8: flash->pidle = (flash->pidle & (~GPIO0) & (~GPIO2)  & (~GPIO1));
 			flash->pidle = flash->pidle  | (GPIO3);
 			flash->pstart = (flash->pstart & (~GPIO0) & (~GPIO2) & (~GPIO1));
@@ -1536,7 +1527,7 @@ void switchingSequencerCalib(struct mpsse_context * flash, int * counterRadarSel
 			flash->pstop = flash->pstop | (GPIO3);
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
 			break;
-		case 9: 
+		case 9:
 			flash->pidle = (flash->pidle & (~GPIO2) & (~GPIO1));
 			flash->pidle = flash->pidle | (GPIO0) | (GPIO3);
 			flash->pstart = (flash->pstart & (~GPIO2) & (~GPIO1));
@@ -1545,16 +1536,16 @@ void switchingSequencerCalib(struct mpsse_context * flash, int * counterRadarSel
 			flash->pstop = flash->pstop | (GPIO0) | (GPIO3);
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
 			break;
-		case 10: 
+		case 10:
 			flash->pidle = (flash->pidle & (~GPIO0)  &(~GPIO2));
-			flash->pidle = flash->pidle | (GPIO1) | (GPIO3); 
+			flash->pidle = flash->pidle | (GPIO1) | (GPIO3);
 			flash->pstart = (flash->pstart & (~GPIO0) & (~GPIO2));
-			flash->pstart = flash->pstart | (GPIO1) | (GPIO3); 
+			flash->pstart = flash->pstart | (GPIO1) | (GPIO3);
 			flash->pstop = (flash->pstop & (~GPIO0) & (~GPIO2));
-			flash->pstop = flash->pstop | (GPIO1) | (GPIO3); 
+			flash->pstop = flash->pstop | (GPIO1) | (GPIO3);
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
 			break;
-		case 11: 
+		case 11:
 			flash->pidle = (flash->pidle  & (~GPIO2));
 			flash->pidle = (flash->pidle | (GPIO0) | (GPIO1) | (GPIO3));
 			flash->pstart = (flash->pstart & (~GPIO2)) ;
@@ -1563,16 +1554,16 @@ void switchingSequencerCalib(struct mpsse_context * flash, int * counterRadarSel
 			flash->pstop = (flash->pstop | (GPIO0) | (GPIO1) | (GPIO3));
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
 			break;
-		case 12: 
+		case 12:
 			flash->pidle = flash->pidle & (~GPIO0) & (~GPIO1) ;
-			flash->pidle = flash->pidle  | (GPIO2) | (GPIO3);		
+			flash->pidle = flash->pidle  | (GPIO2) | (GPIO3);
 			flash->pstart = flash->pstart & (~GPIO0) & (~GPIO1);
 			flash->pstart = flash->pstart  | (GPIO2) | (GPIO3);
 			flash->pstop = flash->pstop & (~GPIO0) & (~GPIO1);
 			flash->pstop = flash->pstop  | (GPIO2) | (GPIO3);
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
 			break;
-		case 13: 
+		case 13:
 			flash->pidle = flash->pidle & (~GPIO1);
 			flash->pidle = flash->pidle | (GPIO0) | (GPIO2) | (GPIO3);
 			flash->pstart = flash->pstart & (~GPIO1);
@@ -1581,36 +1572,36 @@ void switchingSequencerCalib(struct mpsse_context * flash, int * counterRadarSel
 			flash->pstop = flash->pstop | (GPIO0) | (GPIO2) | (GPIO3);
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
 			break;
-		case 14: 
+		case 14:
 			flash->pidle = flash->pidle & (~GPIO0);
-			flash->pidle = flash->pidle | (GPIO2) | (GPIO1) | (GPIO3) ; 
+			flash->pidle = flash->pidle | (GPIO2) | (GPIO1) | (GPIO3) ;
 			flash->pstart = flash->pstart & (~GPIO0);
 			flash->pstart = flash->pstart | (GPIO2) | (GPIO1) | (GPIO3);
 			flash->pstop = flash->pstop  & (~GPIO0);
 			flash->pstop = flash->pstop | (GPIO2) | (GPIO1) | (GPIO3);
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
 			break;
-		case 15: 
+		case 15:
 			flash->pidle = (flash->pidle | (GPIO0) | (GPIO1) | (GPIO2) | (GPIO3));
 			flash->pstart = (flash->pstart | (GPIO0) | (GPIO1) | (GPIO2) | (GPIO3));
 			flash->pstop = (flash->pstop | (GPIO0) | (GPIO1) | (GPIO2) | (GPIO3));
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
-			break;	
+			break;
 
 	}
-} 
+}
 void switchingSequencerModified(struct mpsse_context * flash, int radarSelect)
 {
-	int idxSelect[16] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};	
+	int idxSelect[16] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
 
 	switch(radarSelect)
-	{	
+	{
 		case 0: flash->pidle = (flash->pidle & (~GPIO0) & (~GPIO2) & (~GPIO3) & (~GPIO1));
 			flash->pstart = (flash->pstart & (~GPIO0) & (~GPIO2) & (~GPIO3) & (~GPIO1));
 			flash->pstop = (flash->pstop & (~GPIO0) & (~GPIO2) &(~GPIO3) &(~GPIO1));
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
 			break;
-		case 1: 
+		case 1:
 			flash->pidle = (flash->pidle & (~GPIO2) & (~GPIO3) & (~GPIO1));
 			flash->pidle = flash->pidle | (GPIO0) ;
 			flash->pstart = (flash->pstart & (~GPIO2) & (~GPIO3) & (~GPIO1));
@@ -1619,16 +1610,16 @@ void switchingSequencerModified(struct mpsse_context * flash, int radarSelect)
 			flash->pstop = flash->pstop | (GPIO0) ;
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
 			break;
-		case 2: 
+		case 2:
 			flash->pidle = (flash->pidle & (~GPIO0) & (~GPIO3) &(~GPIO2));
-			flash->pidle = flash->pidle | (GPIO1); 
+			flash->pidle = flash->pidle | (GPIO1);
 			flash->pstart = (flash->pstart & (~GPIO0) & (~GPIO3) & (~GPIO2));
-			flash->pstart = flash->pstart | (GPIO1); 
+			flash->pstart = flash->pstart | (GPIO1);
 			flash->pstop = (flash->pstop & (~GPIO0) & (~GPIO3) & (~GPIO2));
-			flash->pstop = flash->pstop | (GPIO1); 
+			flash->pstop = flash->pstop | (GPIO1);
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
 			break;
-		case 3: 
+		case 3:
 			flash->pidle = (flash->pidle  & (~GPIO3) & (~GPIO2));
 			flash->pidle = (flash->pidle | (GPIO0) | (GPIO1));
 			flash->pstart = (flash->pstart  & (~GPIO3) & (~GPIO2)) ;
@@ -1637,16 +1628,16 @@ void switchingSequencerModified(struct mpsse_context * flash, int radarSelect)
 			flash->pstop = (flash->pstop | (GPIO0) | (GPIO1));
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
 			break;
-		case 4: 
+		case 4:
 			flash->pidle = flash->pidle & (~GPIO0) & (~GPIO1) & (~GPIO3);
-			flash->pidle = flash->pidle  | (GPIO2);		
+			flash->pidle = flash->pidle  | (GPIO2);
 			flash->pstart = flash->pstart & (~GPIO0) & (~GPIO1) & (~GPIO3);
 			flash->pstart = flash->pstart  | (GPIO2);
 			flash->pstop = flash->pstop & (~GPIO0) & (~GPIO1) & (~GPIO3);
 			flash->pstop = flash->pstop  | (GPIO2);
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
 			break;
-		case 5: 
+		case 5:
 			flash->pidle = flash->pidle & (~GPIO3) & (~GPIO1);
 			flash->pidle = flash->pidle | (GPIO0) | (GPIO2);
 			flash->pstart = flash->pstart & (~GPIO3) & (~GPIO1);
@@ -1655,9 +1646,9 @@ void switchingSequencerModified(struct mpsse_context * flash, int radarSelect)
 			flash->pstop = flash->pstop | (GPIO0) | (GPIO2);
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
 			break;
-		case 6: 
+		case 6:
 			flash->pidle = flash->pidle & (~GPIO3) & (~GPIO0);
-			flash->pidle = flash->pidle | (GPIO2) | (GPIO1) ; 
+			flash->pidle = flash->pidle | (GPIO2) | (GPIO1) ;
 			flash->pstart = flash->pstart & (~GPIO3) & (~GPIO0);
 			flash->pstart = flash->pstart | (GPIO2) | (GPIO1);
 			flash->pstop = flash->pstop & (~GPIO3) & (~GPIO0);
@@ -1671,7 +1662,7 @@ void switchingSequencerModified(struct mpsse_context * flash, int radarSelect)
 			flash->pstop = flash->pstop & (~GPIO3) ;
 			flash->pstop = (flash->pstop | (GPIO0) | (GPIO1) | (GPIO2));
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
-			break;	
+			break;
 		case 8: flash->pidle = (flash->pidle & (~GPIO0) & (~GPIO2)  & (~GPIO1));
 			flash->pidle = flash->pidle  | (GPIO3);
 			flash->pstart = (flash->pstart & (~GPIO0) & (~GPIO2) & (~GPIO1));
@@ -1680,7 +1671,7 @@ void switchingSequencerModified(struct mpsse_context * flash, int radarSelect)
 			flash->pstop = flash->pstop | (GPIO3);
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
 			break;
-		case 9: 
+		case 9:
 			flash->pidle = (flash->pidle & (~GPIO2) & (~GPIO1));
 			flash->pidle = flash->pidle | (GPIO0) | (GPIO3);
 			flash->pstart = (flash->pstart & (~GPIO2) & (~GPIO1));
@@ -1689,16 +1680,16 @@ void switchingSequencerModified(struct mpsse_context * flash, int radarSelect)
 			flash->pstop = flash->pstop | (GPIO0) | (GPIO3);
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
 			break;
-		case 10: 
+		case 10:
 			flash->pidle = (flash->pidle & (~GPIO0)  &(~GPIO2));
-			flash->pidle = flash->pidle | (GPIO1) | (GPIO3); 
+			flash->pidle = flash->pidle | (GPIO1) | (GPIO3);
 			flash->pstart = (flash->pstart & (~GPIO0) & (~GPIO2));
-			flash->pstart = flash->pstart | (GPIO1) | (GPIO3); 
+			flash->pstart = flash->pstart | (GPIO1) | (GPIO3);
 			flash->pstop = (flash->pstop & (~GPIO0) & (~GPIO2));
-			flash->pstop = flash->pstop | (GPIO1) | (GPIO3); 
+			flash->pstop = flash->pstop | (GPIO1) | (GPIO3);
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
 			break;
-		case 11: 
+		case 11:
 			flash->pidle = (flash->pidle  & (~GPIO2));
 			flash->pidle = (flash->pidle | (GPIO0) | (GPIO1) | (GPIO3));
 			flash->pstart = (flash->pstart & (~GPIO2)) ;
@@ -1707,16 +1698,16 @@ void switchingSequencerModified(struct mpsse_context * flash, int radarSelect)
 			flash->pstop = (flash->pstop | (GPIO0) | (GPIO1) | (GPIO3));
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
 			break;
-		case 12: 
+		case 12:
 			flash->pidle = flash->pidle & (~GPIO0) & (~GPIO1) ;
-			flash->pidle = flash->pidle  | (GPIO2) | (GPIO3);		
+			flash->pidle = flash->pidle  | (GPIO2) | (GPIO3);
 			flash->pstart = flash->pstart & (~GPIO0) & (~GPIO1);
 			flash->pstart = flash->pstart  | (GPIO2) | (GPIO3);
 			flash->pstop = flash->pstop & (~GPIO0) & (~GPIO1);
 			flash->pstop = flash->pstop  | (GPIO2) | (GPIO3);
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
 			break;
-		case 13: 
+		case 13:
 			flash->pidle = flash->pidle & (~GPIO1);
 			flash->pidle = flash->pidle | (GPIO0) | (GPIO2) | (GPIO3);
 			flash->pstart = flash->pstart & (~GPIO1);
@@ -1725,28 +1716,28 @@ void switchingSequencerModified(struct mpsse_context * flash, int radarSelect)
 			flash->pstop = flash->pstop | (GPIO0) | (GPIO2) | (GPIO3);
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
 			break;
-		case 14: 
+		case 14:
 			flash->pidle = flash->pidle & (~GPIO0);
-			flash->pidle = flash->pidle | (GPIO2) | (GPIO1) | (GPIO3) ; 
+			flash->pidle = flash->pidle | (GPIO2) | (GPIO1) | (GPIO3) ;
 			flash->pstart = flash->pstart & (~GPIO0);
 			flash->pstart = flash->pstart | (GPIO2) | (GPIO1) | (GPIO3);
 			flash->pstop = flash->pstop  & (~GPIO0);
 			flash->pstop = flash->pstop | (GPIO2) | (GPIO1) | (GPIO3);
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
 			break;
-		case 15: 
+		case 15:
 			flash->pidle = (flash->pidle | (GPIO0) | (GPIO1) | (GPIO2) | (GPIO3));
 			flash->pstart = (flash->pstart | (GPIO0) | (GPIO1) | (GPIO2) | (GPIO3));
 			flash->pstop = (flash->pstop | (GPIO0) | (GPIO1) | (GPIO2) | (GPIO3));
 			/*printf("%x is pidle\n,%x is pstart\n%x is pstop",(flash->pidle),flash->pstart,flash->pstop);*/
-			break;	
+			break;
 
 
 	}
-	
+
 }
 
-/* Retrieves the data from the output buffer using our modified fast write and fast read to reduce the number of calls to 
+/* Retrieves the data from the output buffer using our modified fast write and fast read to reduce the number of calls to
  libusb_bulk_transfer in the libusb library.*/
 
 void periodicFunc(struct mpsse_context * flash, unsigned char *dataRead)
@@ -1754,10 +1745,10 @@ void periodicFunc(struct mpsse_context * flash, unsigned char *dataRead)
 	unsigned char readbits1[24];
 	char command[50] ={0},command1[50] ={0};
 	int txSize[20]={0},rxSize[20]={0};
-	struct timeval t1,t2;	
-	
+	struct timeval t1,t2;
+
 	int i,j;
-		
+
 	command1[0] = SampleOutputBuffer | READ;
 	command1[1] = SampleOutputBufferStartLength;
 	command1[2] = SampleOutputBuffer | READ;
@@ -1833,12 +1824,12 @@ void periodicFunc(struct mpsse_context * flash, unsigned char *dataRead)
 	if(FastReady(flash, dataRead, 128*16)!=MPSSE_OK) printf("problem at 1142\n");
 	Stop(flash);
 
-/*		
+/*
 	for(i=0;i<2;i++)
-		{	
-		for(j=0;j<16;j++)		
+		{
+		for(j=0;j<16;j++)
 			command[j] = command1[j+i*16];
-		
+
 		txSize[0] = 2;
 		txSize[1] = 2;
 		txSize[2] = 2;
@@ -1857,18 +1848,18 @@ void periodicFunc(struct mpsse_context * flash, unsigned char *dataRead)
 		rxSize[5] = 127;
 		rxSize[6] = 127;
 		rxSize[7] = 127;
-		
+
 
 		struct timespec req;
 		req.tv_sec=0;
-		req.tv_nsec = 100000;	
-			
+		req.tv_nsec = 100000;
+
 		if(Start(flash) != MPSSE_OK) printf("problem at 1121\n");
 
 		if(FastWriteMod(flash,command,txSize,8,rxSize) != MPSSE_OK) printf("problem at 1124\n");
 		if(FastReady(flash, dataRead + (i*127*8), 127*8)!=MPSSE_OK) printf("problem at 1142\n");
-	
-		
+
+
 		Stop(flash);
 		}
 		command[0] = SampleOutputBuffer | READ;
@@ -1883,7 +1874,7 @@ void processFile(char *fileName, char *fileNameFinal)
 {
 	long lSize;
 	unsigned char *buffer;
-	double *bufferFloat;  	
+	double *bufferFloat;
 	uint32_t *buffer1;
 	int counter=0;
 	int i;
@@ -1899,9 +1890,9 @@ void processFile(char *fileName, char *fileNameFinal)
   	buffer1 = (uint32_t*) malloc (sizeof(uint32_t)*(lSize/4));
 	bufferFloat = (double*) malloc(sizeof(double)*(lSize/4));
   	if (buffer == NULL) {fputs ("Memory error",stderr); exit (2);}
-	
+
   	/* copy the file into the buffer*/
-   	fread (buffer,1,lSize,fp);	
+   	fread (buffer,1,lSize,fp);
 	fclose(fp);
 
 	/*for(i=0;i<2040;i+=8)
@@ -1913,7 +1904,7 @@ void processFile(char *fileName, char *fileNameFinal)
 		buffer1[counter] = (buffer[i] << 24) | (buffer[i+1] << 16) | (buffer[i+2] << 8) | buffer[i+3];
 		bufferFloat[counter] = (double)(buffer1[counter]/(iterationsVal*avgFactorVal) + dacMinVal ) *dacStepVal/81.91;
 
-		fprintf(fp,"%f\n",bufferFloat[counter]);	
+		fprintf(fp,"%f\n",bufferFloat[counter]);
 		counter=counter+1;
 	}
 	fclose(fp);
@@ -1924,7 +1915,7 @@ void processData(unsigned char *buffer, float *buffer1)
 	int i,counter=0;
 	for(i=0;i<2045;i=i+4)
 	{
-		buffer1[counter] = (double)(( (buffer[i] << 24) | (buffer[i+1] << 16) | (buffer[i+2] << 8) | buffer[i+3])/1.0);	
+		buffer1[counter] = (double)(( (buffer[i] << 24) | (buffer[i+1] << 16) | (buffer[i+2] << 8) | buffer[i+3])/1.0);
 
 
 buffer1[counter] = (buffer1[counter]/(iterationsVal*avgFactorVal) + dacMinVal ) *dacStepVal/81.91;
@@ -1935,11 +1926,11 @@ buffer1[counter] = (buffer1[counter]/(iterationsVal*avgFactorVal) + dacMinVal ) 
 void readConfigFile()
 {
 	FILE *fp = NULL;
-	
+
 	long lSize;
 	int i;
-	unsigned char *buffer;  
-	fp = fopen(RADAR_CONFIG,"rb");
+	unsigned char *buffer;
+	fp = fopen("radarConfig.txt","rb");
   	/* obtain file size*/
   	fseek (fp , 0 , SEEK_END);
   	lSize = ftell (fp);
@@ -1947,10 +1938,10 @@ void readConfigFile()
 	/* allocate memory to contain the whole file*/
   	buffer = (unsigned char*) malloc (sizeof(unsigned char)*lSize);
 	/* copy the file into the buffer*/
-   	fread (buffer,1,lSize,fp);	
+   	fread (buffer,1,lSize,fp);
 	fclose(fp);
 
-	SampleReadOutCtrlData_1 = SampleReadOutCtrlData_1 | buffer[0]; 
+	SampleReadOutCtrlData_1 = SampleReadOutCtrlData_1 | buffer[0];
 	ThresholdCtrlData_0 = ThresholdCtrlData_0 | buffer[1];
 	FocusPulsesPerStepData_0 = FocusPulsesPerStepData_0 | buffer[2];
 	FocusPulsesPerStepData_1 = FocusPulsesPerStepData_1 | buffer[3];
@@ -1976,13 +1967,13 @@ void readConfigFile()
 	SampleDelayCoarseTuneData_1 = SampleDelayCoarseTuneData_1 | buffer[15];
 	SampleDelayMediumTuneData_0 = SampleDelayMediumTuneData_0 | buffer[16];
 	frameRate = buffer[17];
-	
-	
 
-	iterationsVal = ((IterationsData_0 << 8) + IterationsData_1)/1.0; 
+
+printf("%d is the coarse Delay\n %d is the medium delay\n",(SampleDelayCoarseTuneData_1)<<8 + SampleDelayCoarseTuneData_0,SampleDelayMediumTuneData_0);
+	iterationsVal = ((IterationsData_0 << 8) + IterationsData_1)/1.0;
 	avgFactorVal = ((NormalPulsesPerStepData_0 << 24 ) + (NormalPulsesPerStepData_1 << 16)  +  (NormalPulsesPerStepData_2 << 8)  + (NormalPulsesPerStepData_3) )/1.0;
-	dacMinVal = ((DACMinData_0 << 8) + DACMinData_1)/1.0; 
-	dacStepVal = ((DACstepData_0 << 8) + DACstepData_1)/1.0; 
+	dacMinVal = ((DACMinData_0 << 8) + DACMinData_1)/1.0;
+	dacStepVal = ((DACstepData_0 << 8) + DACstepData_1)/1.0;
 
 
 
@@ -1998,14 +1989,13 @@ void swap(int *a,int i, int j )
 
 void shuffle(int *a, int sizeArray )
 {
-	int i,j;	
+	int i,j;
 
 	for(i=sizeArray-1;i >=1 ;i--)
 	{
 		j = rand()%(i+1);
 		swap(a,i,j);
 	}
-		
+
 
 }
-

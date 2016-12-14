@@ -2,14 +2,14 @@ CC = gcc
 CFLAGS = -I.:/usr/include/libftdi1/
 CFLAGS += -pthread -lmpsse -lusb-1.0
 
-default: collectData
+default: collectData_GPIO
 
-collectData.o: collectData.c
-	$(CC) $(CFLAGS) -c collectData.c -o collectData.o
+collectData_GPIO.o: collectData_GPIO.c
+	$(CC) $(CFLAGS) -c collectData_GPIO.c -o collectData_GPIO.o
 
-collectData: collectData.o
-	$(CC) $(CFLAGS) collectData.o -o collectData
+collectData_GPIO: collectData_GPIO.o
+	$(CC) $(CFLAGS) collectData_GPIO.o -o collectData_GPIO
 
 clean:
 	-rm -f *.o
-	-rm -f collectData
+	-rm -f collectData_GPIO

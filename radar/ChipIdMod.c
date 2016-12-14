@@ -25,7 +25,7 @@
 int main(void)
 {
 	// Sets the priority of the current process to the highest level.
-	//setpriority(PRIO_PROCESS, 0, -20);	
+	//setpriority(PRIO_PROCESS, 0, -20);
 	//Timer related variables
 	timerEventTrigger *et1 = (timerEventTrigger*)malloc(sizeof(timerEventTrigger))  ;
 	struct itimerspec oldRepeatPeriod;
@@ -39,42 +39,42 @@ int main(void)
 	FILE *fp = NULL,*fp1=NULL,*fp2;
 	char id[80];
 
-		
-	char fileName[300],fileNameFinal[310],fileNameFinalSwitch[316],fileNameFPS[316];	
-	
+
+	char fileName[300],fileNameFinal[310],fileNameFinalSwitch[316],fileNameFPS[316];
+
 	int selectionOrder[4]={0,5,10,15};
 
 	unsigned char readbits;
 	unsigned char readbits1[24];
 	char command[10] ={0};
-	unsigned char dataRead[3000]={0};	
+	unsigned char dataRead[3000]={0};
 	//MPSSE related variables
 	struct mpsse_context *flash = NULL,*flash1 = NULL;
 	int latencyTimer = 1;
 	int i=0;
-    
+
 	int counterRadarSelect =0;
 	fflush(stdin);
 	printf("before open\n");
 
-  //flash = Open(0x0403, 0x6010, SPI0, ONE_MHZ, MSB, IFACE_B, NULL, NULL,latencyTimer);
- //flash1  = Open(0x0403, 0x6010, I2C, ONE_HUNDRED_KHZ, MSB, IFACE_A, NULL, NULL,latencyTimer);
+  flash = Open(0x0403, 0x6010, SPI0, ONE_MHZ, MSB, IFACE_B, NULL, NULL,latencyTimer);
+ flash1  = Open(0x0403, 0x6010, I2C, ONE_HUNDRED_KHZ, MSB, IFACE_A, NULL, NULL,latencyTimer);
 
 //(flash1 = MPSSE(I2C,ONE_HUNDRED_KHZ, MSB,latencyTimer));
 //  flash = OpenIndex(0x0403, 0x6010, SPI0, ONE_MHZ, MSB, IFACE_A, NULL, NULL, 0,latencyTimer);
-if((flash = MPSSE(SPI0,TWELVE_MHZ,MSB,latencyTimer))!=NULL  && flash->open)
+if(flash1 ->open  && flash->open)
 {
 		//Radar ChipID read
 		command[0] = ChipID | READ;
-		command[1] = ChipIDLength;	
+		command[1] = ChipIDLength;
 		Start(flash);
 		FastWrite(flash, command, 2);
 		FastRead(flash, readbits1,2);
-		Stop(flash);	
+		Stop(flash);
 		printf("CHip Id from radar is %x\t%x\n",readbits1[0],readbits1[1]);
 
 		//MOtion Sensor CHIPID read
-	/*command[0] = SLAVEADD | WRITEM; // Powering Motion Sensor ON
+	command[0] = SLAVEADD | WRITEM; // Powering Motion Sensor ON
 		Start(flash1);
 		Write(flash1,command,1);
 		if(GetAck(flash1) == ACK)
@@ -85,7 +85,7 @@ if((flash = MPSSE(SPI0,TWELVE_MHZ,MSB,latencyTimer))!=NULL  && flash->open)
 			Write(flash1,command,1);
 			}
 		Stop(flash1);
-		
+
 		command[0] = SLAVEADD | WRITEM; // Choosing I2C interface
 		Start(flash1);
 		Write(flash1,command,1);
@@ -97,14 +97,14 @@ if((flash = MPSSE(SPI0,TWELVE_MHZ,MSB,latencyTimer))!=NULL  && flash->open)
 			Write(flash1,command,1);
 			}
 		Stop(flash1);
-		
+
 		command[0] = SLAVEADD | WRITEM; // Reading chip ID
 		Start(flash1);
 		Write(flash1,command,1);
 		if(GetAck(flash1) == ACK)
 			{
 			command[0] = 0x75;
-			
+
 			Write(flash1,command,1);
 			if(GetAck(flash1) == ACK)
 				{
@@ -113,20 +113,20 @@ if((flash = MPSSE(SPI0,TWELVE_MHZ,MSB,latencyTimer))!=NULL  && flash->open)
 				Write(flash1,command,1);
 				InternalReadMod(flash1, readbits1,1);
 				SendNacks(flash1);
-				Read(flash1,1);						
-				}	
-			}*/
-	//	Stop(flash1);
-	//	SendAcks(flash1);					
-	//	printf("Chip ID read in motion sensor is %x\n",readbits1[0]);	
+				Read(flash1,1);
+				}
+			}
+	Stop(flash1);
+		SendAcks(flash1);
+	printf("Chip ID read in motion sensor is %x\n",readbits1[0]);
 
 }
 
-//else if(flash1->open == 0)
-//printf("CHB trouble\n");
-//
-//else if(flash->open == 0)
-//printf("CHA trouble\n");
+else if(flash1->open == 0)
+printf("CHB trouble\n");
+
+else if(flash->open == 0)
+printf("CHA trouble\n");
 
 
 
@@ -141,15 +141,13 @@ if((flash = MPSSE(SPI0,TWELVE_MHZ,MSB,latencyTimer))!=NULL  && flash->open)
 
 
 
-	
+
 
 
 
 	Close(flash);
-//	Close(flash1);
+	Close(flash1);
 
 
 	return 0;
 }
-
-

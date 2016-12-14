@@ -26,7 +26,7 @@ function EasySense() {
 
 util.inherits(EasySense, events.EventEmitter);
 
-EasySense.prototype.sample = function(seconds, filebase) {
+EasySense.prototype.sample = function(seconds, filebase) { 
     console.log("EasySense: Begin Sampling");
     var self = this;
     var count = 0;
@@ -41,7 +41,8 @@ EasySense.prototype.sample = function(seconds, filebase) {
 
         console.log('Starting EasySense data collection');
         console.log('/home/root/easysense/radar/easysense.sh' + ' /home/root/' + filebase + ' ' + (seconds*100));
-        var radar = spawn('/home/root/easysense/radar/easysense.sh', ['/home/root/' + filebase, seconds*100]);
+//        var radar = spawn('/home/root/easysense/radar/easysense.sh', ['/home/root/' + filebase, seconds*100]);
+        var radar = spawn('/home/code/runCollectData.sh');
 
         var interval = setInterval(function() {
             self.emit('progress', count++);
