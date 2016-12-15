@@ -1,7 +1,7 @@
 {
   "name": "EasySenseBLEApp",
   "description": "",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "main": "main.js",
   "engines": {
     "node": ">=0.10.0"

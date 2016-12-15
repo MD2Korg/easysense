@@ -50,7 +50,27 @@ RemainAfterExit=yes
 WantedBy=multi-user.target
 ```
 
+```
+$ cat /etc/systemd/system/easysense.service
+[Unit]
+Description=EasySense BLE Control Service
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+ExecStart=/usr/bin/node /home/root/easysense/easysenseNode/main.js
+User=root
+Restart=on-failure
+RestartSec=10
+WorkingDirectory=/home/root/easysense/easysenseNode/
+
+[Install]
+WantedBy=multi-user.target
+```
+
+
 Run `systemctl enable rfkill-unblock.service`
+Run `systemctl enable easysense.service`
 
 
 ```
@@ -62,8 +82,11 @@ $ cat /etc/ld.so.conf
 Run `ldconfig`
 
 
-
+Install some node dependencies globally
 ```
-npm install nodejs-npm
-cd /node_app_slot
-npm install bluetooth-hci-socket
+npm install -g nodejs-npm
+```
+
+Navigate to `/home/root/easysense/easysenseNode` and run `npm install`
+
+Reboot the device

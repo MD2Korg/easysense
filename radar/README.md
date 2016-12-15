@@ -6,22 +6,9 @@ Components Required
 2. USB OTG adapter and cable - 1
 3.  USB cable - 2
 
-## Accessing USB Mass storage from within Intel Edison
-```
-unmount /media/storage
-
-losetup -o 8192 /dev/loop0 /dev/disk/by-partlabel/updates
-
-mount /dev/loop0 /media/storage
-```
-
-Available at `/media/storage`
-
-
-
 ## Install dependencies
 ```
-opkg install libusb-1.0-dev kernel-module-ftdi-sio swig-dev coreutils-dev libpython2.7-1.0
+opkg install systemd-dev libusb-1.0-dev kernel-module-ftdi-sio swig-dev coreutils-dev libpython2.7-1.0
 
 ```
 
@@ -66,7 +53,7 @@ make
 ```
 root@EasySense:# cd /home/root/easysense/radar/
 
-root@EasySense:~/easysense/radar# ./easysense.sh 12345 10
+root@EasySense:~/easysenseradar# ./easysense.sh 12345 10
 Base filenames: 12345
 Chip ID read is 3	6
 Chip ID read is 3	6
@@ -74,7 +61,7 @@ ADC is not connected
 Found both radar and ADC
 Starting measurements....
 Chip ID read is 3	6
-root@EasySense:~/easysense/radar# ls -ahl 12345*
+root@EasySense:~# ls -ahl 12345*
 -rw-r--r--  1 root root 8.0K Jun 24 15:35 12345_Radar.txt
 -rw-r--r--  1 root root   19 Jun 24 15:35 12345_Radar_FPS.txt
 -rw-r--r--  1 root root  20K Jun 24 15:35 12345_Radar_Final

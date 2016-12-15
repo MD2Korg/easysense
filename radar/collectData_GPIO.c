@@ -541,7 +541,7 @@ void *MotionSenseRead()
 
 
 		// 1 minute = 6000 samples
-		if(countSamples >= 6000)
+		if(countSamples >= TOTAL_FRAMES)
 			{
 			//printf("Exiting measurement!\n");
 			break;
