@@ -8,7 +8,7 @@ Components Required
 
 ## Install dependencies
 ```
-opkg install systemd-dev libusb-1.0-dev kernel-module-ftdi-sio swig-dev coreutils-dev libpython2.7-1.0
+opkg install systemd-dev libusb-1.0-dev kernel-module-ftdi-sio swig-dev coreutils-dev libpython2.7-1.0 git
 
 ```
 
