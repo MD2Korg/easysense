@@ -10,7 +10,6 @@
 #include<sys/epoll.h>
 #include<errno.h>
 
-/*gcc -I /usr/include/libftdi1/ radarMeasurePipelined.c  -lmpsse -lusb-1.0 -o radarMeasurePipelined.o */
 
 
 /* MD2K Configurations */
@@ -216,7 +215,7 @@ unsigned char SampleDelayMediumTuneData_0 = 0x00; /* Read from configuration fil
 #define SampleOutputBufferFinalLength 0x90
 
 
-// Error code
+// Error code for configuration files
 #define ERROR_CONFIG_FILE_MISSING 0x44
 #define SUCCESS_1 0xFF
 
