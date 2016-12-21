@@ -28,23 +28,29 @@ int ECGIndex = 0, radarIndex =1; int exitFlag = 0;
 //char directoryLocation[] ="/media/sdcard/"; 
 //char directoryLocation[] = "/home/code/data/";
 char directoryLocation[] = "/home/root/";
+/* MD2K Configurations */
+// 1 minute = 6000 frames
+int TOTAL_FRAMES = 6001; //  We ignore the first fast time frame of the received radar signal
+char basename[80];
 
-// ERROR CODES
+// ERROR CODES definitions 
 #define ERROR_EDISON_SLAVE_RESTART_REQUIRED 0x11
 #define ERROR_RADAR_DETECT 0x22
 #define ERROR_MOTIONSENSE_DETECT 0x33
-#define ERROR_PATIENT_ID_MISSING 0x55
-#define ERROR_RADAR_OUTPUT_WRITE_DIRECTORY 0x66
-#define ERROR_MOTION_SENSE_OUTPUT_WRITE_DIRECTORY 0x77
-#define ERROR_RADAR_INIT 0x88
+#define ERROR_RADAR_OUTPUT_WRITE_DIRECTORY 0x55
+#define ERROR_MOTION_SENSE_OUTPUT_WRITE_DIRECTORY 0x66
+
+
 void * RadarRead()
 {
 	sleep(3);
 	srand(time(NULL));  // seed for random number to select GPIO lines
-
+	
+	//increasing the priority of this thread
 	struct sched_param schedp;
     	schedp.sched_priority = 1;
         sched_setscheduler(0, SCHED_FIFO, &schedp);
+	
 	//Timer related variables
 	timerEventTrigger *et1 = (timerEventTrigger*)malloc(sizeof(timerEventTrigger)) ;
 	struct itimerspec oldRepeatPeriod;
@@ -53,7 +59,7 @@ void * RadarRead()
 
 	//Channel selection variables
 	unsigned char flagRandomOrder;
-	int numChannels = 1;
+	int numChannels = 16;
 	/*int selectionOrder[8]={0,5,10,15,1,6,11,14};*/
 //	int selectionOrder[10]={0,1,2,4,5,6,8,9,10,15};
 
@@ -65,32 +71,23 @@ void * RadarRead()
 	char fileNameConfig[300];
 	long int counterFrames=0;
 	double fps;
-	FILE *fp = NULL,*fp1 = NULL,*fp2 = NULL,*fp3 = NULL,*fp4 = NULL;
+	FILE *fp = NULL,*fp1 = NULL,*fp2 = NULL,*fp3 = NULL;
 	char id[80];
 	void *retVal;
 	retVal = calloc(1,sizeof(int));
-
-
-	fp = fopen("LastFileName.txt","r");	
-	if(fp == NULL) 
-	{
-		printf("File containing Patient ID is missing\n");
-		*(int *)retVal =ERROR_PATIENT_ID_MISSING; 
-		return retVal; 
-	}
-	fscanf(fp,"%s",id); 
-	fclose(fp);	
+	
 	char fileName[300],fileNameFinal[310],fileNameFinalSwitch[316],fileNameFPS[316],fileNameSampling[316],fileNameAve[310];	
 
-	sprintf(fileName,"%s%s_Radar.txt",directoryLocation,id);
-	sprintf(fileNameFinal,"%s%s_Radar_Final.txt",directoryLocation,id);
-	sprintf(fileNameFinalSwitch,"%s%s_Radar_Switch.txt",directoryLocation,id);
-	sprintf(fileNameFPS,"%s%s_Radar_FPS.txt",directoryLocation,id);
-	sprintf(fileNameAve,"%s%s_Radar_Ave.bin",directoryLocation,id);
+	sprintf(fileName,"%s%s_Radar.txt",directoryLocation,basename);
+	sprintf(fileNameFinal,"%s%s_Radar_Final.txt",directoryLocation,basename);
+	sprintf(fileNameFinalSwitch,"%s%s_Radar_Switch.txt",directoryLocation,basename);
+	sprintf(fileNameFPS,"%s%s_Radar_FPS.txt",directoryLocation,basename);
+	sprintf(fileNameAve,"%s%s_Radar_Ave.bin",directoryLocation,basename);
 	fp1 = fopen(fileNameFinalSwitch,"w");
 	fp = fopen(fileName,"w");
 	fp2 = fopen(fileNameFPS,"w");	
-	fp4 = fopen(fileNameAve,"wb");
+	fp3 = fopen(fileNameAve,"wb"); // file for storing the average value of the received radar signal
+	// Checking if the files can be created in the specified location
 	if(fp1 == NULL || fp == NULL || fp2 == NULL  || fp4 ==NULL) 
 	{
 		printf("Error creating output files for radar\n");
@@ -110,7 +107,7 @@ void * RadarRead()
 	unsigned char dataRead[3000]={0};
 	float  dataAve[513] = {0};	
 
-        flash = Open(0x0403,0x6010,SPI0,SIX_MHZ,MSB,IFACE_B,NULL,NULL,latencyTimer );
+        flash = Open(0x0403,0x6010,SPI0,SIX_MHZ,MSB,IFACE_B,NULL,NULL,latencyTimer ); // reduced the SPI clock speed. 
 	if(flash->open)
 	{
 		// Resetting sweep controller
@@ -137,6 +134,7 @@ void * RadarRead()
 		
 		printf("Chip ID read is %x\t%x\n",readbits1[0],readbits1[1]);
 		//Read the configuration files sent from Matlab.
+		// Check if the configuration files are present else return error code	
 		if(readConfigFile()==ERROR_CONFIG_FILE_MISSING)
 		{
 			printf("Configuration file radarConfig missing \n");
@@ -163,13 +161,8 @@ void * RadarRead()
 		initializeRadar(flash, command);
 		
 		// Check if the required values are set in radar registers
-		if(checkInitializationRadar(flash,command) ==0)
-		{
-			printf("Error intializing radar registers\n");
-			*(int *)retVal =ERROR_RADAR_INIT; 
-			return retVal; 
-		}
-
+		checkInitializationRadar(flash,command);
+		
 
 		// Clear Last sweep's results from radar's buffers and output buffers
 		clearLastSweepLoadOutput(flash);
@@ -248,7 +241,7 @@ void * RadarRead()
 
 
 				// 5 minute = 6000 frames
-				if(counterFrames >= 6001)
+				if(counterFrames >= TOTAL_FRAMES)
 				{
 					//printf("Exiting measurement!\n");
 					exitFlag = 1;
@@ -262,7 +255,7 @@ void * RadarRead()
 	}
 	else
 	{
-		
+		// returning error code if radar is not detected 
 		printf("Error in detecting Radar\n");
 		*(int *)retVal =ERROR_RADAR_DETECT; 
 		return retVal; 
@@ -273,11 +266,11 @@ void * RadarRead()
 	//printf("Frames per second=%f\n",fps);
 	fprintf(fp2,"%f\n%f",((t3.tv_sec - t4.tv_sec)*1000+ (t3.tv_usec - t4.tv_usec)/1000.0)/1000.0,fps);
 	Close(flash);
-	fwrite(dataAve,4,512,fp4);	
+	fwrite(dataAve,4,512,fp3); //storing the average value into a file.	
 	fclose(fp);
 	fclose(fp1);
 	fclose(fp2);
-	fclose(fp4);
+	fclose(fp3);
 	// Processes the file that contains the raw bytes and converts into samples by combining 4 bytes.
 
 	//processFile(fileName,fileNameFinal);
@@ -303,41 +296,33 @@ void * MotionSenseRead()
 
 	void * retVal;
 	retVal = calloc(1,sizeof(int));
-	char id[80];
-	fp = fopen("LastFileName.txt","r");	
-	if(fp == NULL)
-	{
-		printf("Patient ID missing\n");
-		*(int *)retVal = ERROR_PATIENT_ID_MISSING;
-		return retVal; 
-	}
-
-	fscanf(fp,"%s",id); 
-	fclose(fp);	
+	
+	
 	char fileName[300],fileNameAccX[310],fileNameAccY[316],fileNameAccZ[316],fileNameGyroX[310],fileNameGyroY[316],fileNameGyroZ[316];	
 	char fileNameCh1[310],fileNameCh2[316];	
-	sprintf(fileNameCh1,"%s%s_Ch1.txt",directoryLocation,id);
-	sprintf(fileNameCh2,"%s%s_Ch2.txt",directoryLocation,id);
+	sprintf(fileNameCh1,"%s%s_Ch1.txt",directoryLocation,basename);
+	sprintf(fileNameCh2,"%s%s_Ch2.txt",directoryLocation,basename);
 	fp7 = fopen(fileNameCh1,"w");
 	fp8 = fopen(fileNameCh2,"w");
-	sprintf(fileNameAccX,"%s%s_AccX.txt",directoryLocation,id);
-	sprintf(fileNameAccY,"%s%s_AccY.txt",directoryLocation,id);
-	sprintf(fileNameAccZ,"%s%s_AccZ.txt",directoryLocation,id);
-	sprintf(fileNameGyroX,"%s%s_GyroX.txt",directoryLocation,id);
-	sprintf(fileNameGyroY,"%s%s_GyroY.txt",directoryLocation,id);
-	sprintf(fileNameGyroZ,"%s%s_GyroZ.txt",directoryLocation,id);	
+	sprintf(fileNameAccX,"%s%s_AccX.txt",directoryLocation,basename);
+	sprintf(fileNameAccY,"%s%s_AccY.txt",directoryLocation,basename);
+	sprintf(fileNameAccZ,"%s%s_AccZ.txt",directoryLocation,basename);
+	sprintf(fileNameGyroX,"%s%s_GyroX.txt",directoryLocation,basename);
+	sprintf(fileNameGyroY,"%s%s_GyroY.txt",directoryLocation,basename);
+	sprintf(fileNameGyroZ,"%s%s_GyroZ.txt",directoryLocation,basename);	
 	fp1 = fopen(fileNameAccX,"w");
 	fp2 = fopen(fileNameAccY,"w");
 	fp3 = fopen(fileNameAccZ,"w");	
 	fp4 = fopen(fileNameGyroX,"w");
 	fp5 = fopen(fileNameGyroY,"w");
 	fp6 = fopen(fileNameGyroZ,"w");	
+	\\Checking if the files can be created in the specified location
 	if(fp1 == NULL || fp2 == NULL || fp3 == NULL || fp4 ==NULL || fp5 == NULL|| fp6 == NULL || fp7 == NULL || fp8== NULL)
 	{
 		printf("Error creating output files for motion sensor and ECG \n");
 		*(int *)retVal =  ERROR_MOTION_SENSE_OUTPUT_WRITE_DIRECTORY;
 		return retVal; 
-	}
+	}	
 
 	/*Timer related variables*/
 	timerEventTrigger *et1 = (timerEventTrigger*)malloc(sizeof(timerEventTrigger));
@@ -622,9 +607,7 @@ void * MotionSenseRead()
 		//printf("%f is the time taken for Motion Sensor and ADC\n",((t5.tv_sec - t1.tv_sec)*1000+ (t5.tv_usec - t1.tv_usec)/1000.0));
 //		printf("%f is the periodic time taken \n",((t2.tv_sec - t1.tv_sec)*1000+ (t2.tv_usec - t1.tv_usec)/1000.0));
 				
-
-		// 5 minute = 6000 samples
-		if(countSamples >=6000)
+		if(countSamples >=TOTAL_FRAMES -1)
 			{
 			//printf("Exiting measurement!\n");
 			break;
@@ -634,6 +617,7 @@ void * MotionSenseRead()
 	}
 	else
 	{
+		// return error code if the motion sensor and ADC are not detected
 		printf("Unable to detect Motion sense and ECG\n");
 		*(int *)retVal =  ERROR_MOTIONSENSE_DETECT;
 		return retVal;
@@ -657,27 +641,21 @@ void * MotionSenseRead()
 
 
 }
-
+// Creating the GPIO file handles for Edison to turn on the power supply
 void createport(unsigned char portNum)
 {
 char command[400];
 (sprintf(command,"echo %d > /sys/class/gpio/export",portNum )  );
 system(command);
 }
-
+// Deleting the GPIO file handles for Edison 
 void deleteport(unsigned char portNum)
 {
 char command[400];
 sprintf(command,"[ -d /sys/class/gpio/gpio%d ] && echo %d > /sys/class/gpio/unexport",portNum,portNum );
 system(command);
 }
-
-
-
-
-
-
-
+//Configuring the GPIO ports of Edison
 void setupPort(unsigned char portNum,unsigned char direction  )
 {
 char command[400];
@@ -692,7 +670,7 @@ else
 system(command);
 }
 }
-
+// Setting the register values for configuring GPIO of Edison
 void setValue(unsigned char portNum, unsigned char value )
 {
 char command[400];
@@ -701,7 +679,7 @@ system(command);
 }
 
 
-int main(void)
+int main(int argc, char **argv)
 {
 	unsigned char gpio_devicePower = 48;
 	unsigned char gpio_RF_vcc = 13;
@@ -757,11 +735,22 @@ int main(void)
 	setpriority(PRIO_PROCESS, 0, -20);	
 	
 
+	if (argc >= 3) {
+		TOTAL_FRAMES = atoi(argv[2]); //Read in number of frames to sample
+	}
+	if (argc >= 2) {
+			printf("Base filenames: %s\n", argv[1]);
+			strcpy(basename, argv[1]);
+	} else {
+			printf("Default filenames: EasySense\n");
+			strcpy(basename,"EasySense");
+	}
+	
 	//MPSSE related variables
 	int radarFoundFlag = 0,ADCFoundFlag = 0;
 	int latencyTimer = 1;
 
-
+	
 
 	unsigned char readbits;
 	unsigned char readbits1[24];
@@ -775,9 +764,9 @@ int main(void)
     	pthread_join(tid,&retVal ); 
     	pthread_join(tid1, &retVal);	
 
-//	setValue(gpio_RF_vcc,0 );
-//	setValue(gpio_analog_vcc,0);
-//	setValue(gpio_en_edison,0);
+	setValue(gpio_RF_vcc,0 );
+	setValue(gpio_analog_vcc,0);
+	setValue(gpio_en_edison,0);
 
 
 	
