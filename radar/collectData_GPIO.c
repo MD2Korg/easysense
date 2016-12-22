@@ -316,7 +316,7 @@ void * MotionSenseRead()
 	fp4 = fopen(fileNameGyroX,"w");
 	fp5 = fopen(fileNameGyroY,"w");
 	fp6 = fopen(fileNameGyroZ,"w");	
-	\\Checking if the files can be created in the specified location
+	//Checking if the files can be created in the specified location
 	if(fp1 == NULL || fp2 == NULL || fp3 == NULL || fp4 ==NULL || fp5 == NULL|| fp6 == NULL || fp7 == NULL || fp8== NULL)
 	{
 		printf("Error creating output files for motion sensor and ECG \n");
