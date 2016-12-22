@@ -88,7 +88,7 @@ void * RadarRead()
 	fp2 = fopen(fileNameFPS,"w");	
 	fp3 = fopen(fileNameAve,"wb"); // file for storing the average value of the received radar signal
 	// Checking if the files can be created in the specified location
-	if(fp1 == NULL || fp == NULL || fp2 == NULL  || fp4 ==NULL) 
+	if(fp1 == NULL || fp == NULL || fp2 == NULL  || fp3 ==NULL) 
 	{
 		printf("Error creating output files for radar\n");
 		*(int *)retVal =ERROR_RADAR_OUTPUT_WRITE_DIRECTORY; 
