@@ -26,7 +26,7 @@
 #define COMMANDMODE 0x30 /*Address pointer is Or'ed to use in command mode*/
 int ECGIndex = 0, radarIndex =1; int exitFlag = 0;
 //char directoryLocation[] ="/media/sdcard/";
-char directoryLocation[] = "/home/root/";
+char directoryLocation[] = "/home/root/Data/";
 /* MD2K Configurations */
 // 1 minute = 6000 frames
 int TOTAL_FRAMES = 6000;
@@ -605,32 +605,27 @@ int main(int argc, char **argv)
 	unsigned char gpio_devicePower = 48;
 	unsigned char gpio_RF_vcc = 13;
 	unsigned char gpio_analog_vcc = 49;
-	unsigned char gpio_en_edison = 47;
-	unsigned char gpio_pwm_haptic = 12;
-
+	struct mpsse_context *flash=NULL;
 	createport(gpio_devicePower );
 	createport(gpio_RF_vcc);
 	createport(gpio_analog_vcc);
-	createport(gpio_en_edison);
-	createport(gpio_pwm_haptic);
 
         setupPort(gpio_devicePower,1);
 	setupPort(gpio_RF_vcc,1);
 	setupPort(gpio_analog_vcc,1);
-	setupPort(gpio_en_edison,1);
-	setupPort(gpio_pwm_haptic,1);
 
 	setValue(gpio_devicePower,1);
 	setValue(gpio_RF_vcc,1);
 	setValue(gpio_analog_vcc,1);
-	setValue(gpio_en_edison,1);
-	setValue(gpio_pwm_haptic,1);
-
-	sleep(4);
-	setValue(gpio_en_edison,0);
-	setValue(gpio_pwm_haptic,0);
 
 	sleep(1);
+	flash = Open(0x0403,0x6010,GPIO,TWELVE_MHZ,MSB,IFACE_B,NULL,NULL,1 );
+	PinHigh(flash,GPIOH0);
+	sleep(1);
+	PinLow(flash,GPIOH0);
+	Close(flash);
+
+
 	// Sets the priority of the current process to the highest level.
 	setpriority(PRIO_PROCESS, 0, -20);
 
@@ -647,15 +642,6 @@ int main(int argc, char **argv)
 	}
 
 
-	//MPSSE related variables
-	int radarFoundFlag = 0,ADCFoundFlag = 0;
-	int latencyTimer = 1;
-	struct mpsse_context *flash = NULL;
-	struct mpsse_context *flash1 = NULL;
-
-	unsigned char readbits;
-	unsigned char readbits1[24];
-	char command[10] ={0};
 	pthread_t tid,tid1;
 
 	pthread_create(&tid, NULL, MotionSenseRead, NULL);
@@ -664,10 +650,19 @@ int main(int argc, char **argv)
 /*Thread Creation for Radar sampling and ECG sampling */
     	pthread_join(tid, NULL);
     	pthread_join(tid1, NULL);
+	
+	printf("Shutting Down\n");
+
+	flash = Open(0x0403,0x6010,GPIO,TWELVE_MHZ,MSB,IFACE_B,NULL,NULL,1 );
+	PinHigh(flash,GPIOH0);
+	PinHigh(flash,GPIOH0);
+	sleep(1);
+	PinLow(flash,GPIOH0);
+	Close(flash);
 
 	setValue(gpio_RF_vcc,0 );
 	setValue(gpio_analog_vcc,0);
-	setValue(gpio_en_edison,0);
+	setValue(gpio_devicePower,0);
 
 	return 0; //Return success
 }
