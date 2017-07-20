@@ -6,6 +6,15 @@ Components Required
 2. USB OTG adapter and cable - 1
 3.  USB cable - 2
 
+## Opkg setup
+```
+cat /etc/opkg/base-feeds.conf
+src/gz all http://repo.opkg.net/edison/repo/all
+src/gz edison http://repo.opkg.net/edison/repo/edison
+src/gz core2-32 http://repo.opkg.net/edison/repo/core2-32
+
+opkg update
+```
 ## Install dependencies
 ```
 opkg install systemd-dev libusb-1.0-dev kernel-module-ftdi-sio swig-dev coreutils-dev libpython2.7-1.0 git
