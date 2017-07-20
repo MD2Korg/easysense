@@ -54,8 +54,8 @@ WantedBy=multi-user.target
 $ cat /etc/systemd/system/easysense.service
 [Unit]
 Description=EasySense BLE Control Service
-Wants=network-online.target
-After=network-online.target
+Wants=basic.target
+After=basic.target
 
 [Service]
 ExecStart=/usr/bin/node /home/root/easysense/easysenseNode/main.js
